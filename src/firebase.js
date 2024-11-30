@@ -1,3 +1,7 @@
+/*
+Path: src/firebase.js
+Este archivo es donde se configura la conexión con Firebase.
+*/
 import firebase from "firebase";
 
 const firebaseConfig = {
