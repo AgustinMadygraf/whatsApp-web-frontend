@@ -4,11 +4,11 @@ Este es el componente SideBar que se muestra en la pantalla principal de la apli
 */
 
 import React, { useState } from "react";
-import { Avatar, IconButton } from "@material-ui/core";
-import DonutLargeIcon from "@material-ui/icons/DonutLarge";
-import ChatIcon from "@material-ui/icons/Chat";
-import MoreVertIcon from "@material-ui/icons/MoreVert";
-import SearchIcon from "@material-ui/icons/Search";
+import { Avatar, IconButton } from "@mui/material";
+import DonutLargeIcon from "@mui/icons-material/DonutLarge";
+import ChatIcon from "@mui/icons-material/Chat";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import SearchIcon from "@mui/icons-material/Search";
 import "./sidebar.css";
 import SideBarChat from "./SideBarChat";
 import { useSelector } from "react-redux";

@@ -1,33 +1,85 @@
-### **To-Do List**
+# **To-Do List**
 
-#### **1. Advertencia: `findDOMNode` está obsoleto**
-**Archivo(s): `src/components/login/Login.js`**
-- [ ] Identificar dónde se utiliza `findDOMNode` indirectamente (probablemente en componentes heredados de Material-UI).
-- [ ] Cambiar los componentes afectados a versiones modernas de Material-UI (`@mui/material`).
-- [ ] Si no es posible, agregar referencias explícitas con `React.forwardRef`.
+Este documento organiza las tareas pendientes, dividiendo las responsabilidades en pasos pequeños y asignando cada tarea a un solo archivo.
 
-#### **2. `Cross-Origin-Opener-Policy` bloquea la funcionalidad**
-**Archivo(s): Backend o Configuración del Servidor (si lo hay)**
-- [ ] Asegurar que los encabezados de respuesta HTTP incluyan:
-  ```
+---
+
+## **1. Resolver Advertencia: `findDOMNode` está obsoleto**
+
+### **Archivo: `src/components/SideBar.js`**
+- [ ] Reemplazar el uso de `IconButton` con el componente equivalente de `@mui/material`.
+- [ ] Revisar los componentes utilizados en `SideBar` para asegurarse de que sean compatibles con React 18.
+
+### **Archivo: `src/components/Chat.js`**
+- [ ] Reemplazar el uso de `IconButton` con el componente equivalente de `@mui/material`.
+- [ ] Revisar el código para asegurarse de que no dependa indirectamente de `findDOMNode`.
+
+### **Archivo: `src/components/login/Login.js`**
+- [ ] Cambiar el componente `Button` por el de `@mui/material`.
+- [ ] Revisar si `Login.js` utiliza otros componentes heredados y actualizarlos si es necesario.
+
+---
+
+## **2. Advertencia: `Cross-Origin-Opener-Policy`**
+
+### **Archivo: Configuración del Servidor**
+- [ ] Investigar si el servidor backend permite configurar encabezados HTTP.
+- [ ] Agregar los encabezados HTTP recomendados:
+  ```http
   Cross-Origin-Opener-Policy: same-origin
   Cross-Origin-Embedder-Policy: require-corp
   ```
-- [ ] En el frontend, verificar si Firebase permite agregar estos encabezados en las reglas de CORS.
 
-#### **3. Deprecaciones en React Router v6**
-**Archivo(s): `src/App.js`**
-- [ ] Actualizar el manejo de rutas para prepararse para cambios en React Router v7:
-  - Usar `useRoutes` en lugar de `<Routes>` si es necesario.
-  - Probar el flag `v7_relativeSplatPath` y verificar la compatibilidad.
-- [ ] Consultar documentación: [React Router Future](https://reactrouter.com/en/main/start/overview).
+### **Archivo: `src/components/login/Login.js`**
+- [ ] Probar el manejo de ventanas emergentes para autenticación.
+- [ ] Verificar que las ventanas emergentes de Firebase no generen problemas adicionales relacionados con políticas de seguridad.
 
-#### **4. Firebase Authentication: mensaje de éxito**
-**Archivo(s): `src/components/login/Login.js`**
-- [ ] Validar que el flujo de inicio de sesión funcione sin errores al recibir la respuesta de Firebase.
-- [ ] Agregar mensajes de error claros si falla el inicio de sesión.
+---
 
-#### **5. General: Mejorar logs y depuración**
-**Archivo(s): Global**
-- [ ] Revisar los `console.log` en toda la aplicación y eliminar los innecesarios.
-- [ ] Usar una librería como `debug` o un middleware de Redux para manejar logs en desarrollo.
+## **3. Advertencia: `React Router Future Flag Warning`**
+
+### **Archivo: `src/App.js`**
+- [ ] Cambiar `<BrowserRouter>` a `createBrowserRouter` y actualizar el código de enrutamiento.
+- [ ] Configurar el flag `v7_startTransition` en el archivo de rutas.
+- [ ] Configurar el flag `v7_relativeSplatPath` en el archivo de rutas.
+- [ ] Probar que las rutas `/` y `/rooms/:roomId` funcionen correctamente después de los cambios.
+
+---
+
+## **4. Error: `e.target.className.indexOf` no es una función**
+
+### **Archivo: `src/utils/mouseEvents.js`** (o donde ocurra el evento)
+- [ ] Identificar el lugar exacto donde ocurre el error `e.target.className.indexOf`.
+- [ ] Agregar una validación para asegurarse de que `e.target.className` sea un string:
+  ```javascript
+  if (typeof e.target.className === "string" && e.target.className.indexOf("some-class") !== -1) {
+    // Tu lógica aquí
+  }
+  ```
+- [ ] Probar la funcionalidad de mouse para verificar que el error no se repita.
+
+---
+
+## **5. Verificar Flujo de Firebase**
+
+### **Archivo: `src/components/login/Login.js`**
+- [ ] Verificar que la función `signInWithPopup` se ejecute correctamente.
+- [ ] Agregar un mensaje de error claro cuando falle el inicio de sesión.
+- [ ] Probar la autenticación en diferentes navegadores (Chrome, Firefox, Edge).
+- [ ] Confirmar que el `dispatch` se actualice correctamente con el usuario autenticado.
+
+---
+
+## **6. Limpieza del Proyecto**
+
+### **Archivo: Proyecto Completo**
+- [ ] Eliminar la carpeta `node_modules` para una instalación limpia.
+- [ ] Borrar el archivo `package-lock.json` para resolver conflictos de dependencias:
+  ```bash
+  rm -rf node_modules package-lock.json
+  ```
+- [ ] Reinstalar todas las dependencias con:
+  ```bash
+  npm install
+  ```
+- [ ] Probar que la aplicación funcione después de la reinstalación.
