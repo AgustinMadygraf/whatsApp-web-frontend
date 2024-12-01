@@ -10,21 +10,7 @@ import "./chat.css";
 import ChatHeader from "./ChatHeader";
 import ChatBody from "./ChatBody";
 import ChatFooter from "./ChatFooter";
-
-const mockRoomsData = {
-  "1": {
-    name: "Room 1",
-    roomMessages: [
-      { id: 1, name: "User1", message: "Hello Room 1!", date: new Date() },
-    ],
-  },
-  "2": {
-    name: "Room 2",
-    roomMessages: [
-      { id: 1, name: "User2", message: "Hello Room 2!", date: new Date() },
-    ],
-  },
-};
+import { mockRoomsData } from "../data/mockRoomsData";
 
 function Chat() {
   const user = useSelector((state) => state.rooms.user);

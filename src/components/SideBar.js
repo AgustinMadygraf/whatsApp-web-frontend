@@ -13,12 +13,8 @@ import "./sidebar.css";
 import SideBarChat from "./SideBarChat";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import LogoutButton from "./LogoutButton"; // Ruta corregida
-
-const mockRoomsData = [
-  { _id: "1", name: "Room 1", roomMessages: [{ message: "Hello Room 1" }] },
-  { _id: "2", name: "Room 2", roomMessages: [{ message: "Hello Room 2" }] },
-];
+import LogoutButton from "./LogoutButton";
+import { mockRoomsData } from "../data/mockRoomsData";
 
 const SideBar = () => {
   const [rooms, setRooms] = useState(mockRoomsData);
