@@ -32,7 +32,7 @@ console.log("Router configurado:", router);
 
 function App() {
   const user = useSelector((state) => state.rooms.user);
-  console.log("Usuario actual:", user); // Debugging statement
+  console.log("Usuario actual desde Redux:", user); // Debugging statement
 
   return (
     <div className="App">

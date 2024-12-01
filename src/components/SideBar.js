@@ -21,7 +21,10 @@ const mockRoomsData = [
 
 const SideBar = () => {
   const [rooms, setRooms] = useState(mockRoomsData);
-  const user = useSelector((state) => state.rooms.user);
+  const user = useSelector((state) => {
+    console.log("Estado global completo:", state);
+    return state.rooms.user;
+    });
   const navigate = useNavigate();
 
   const addNewChat = () => {

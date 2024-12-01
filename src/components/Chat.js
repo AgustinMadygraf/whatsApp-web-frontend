@@ -21,7 +21,10 @@ const mockRoomData = {
 };
 
 function Chat() {
-  const user = useSelector((state) => state.rooms.user);
+  const user = useSelector((state) => {
+    console.log("Estado global completo:", state);
+    return state.rooms.user;
+    });
   const [input, setInput] = useState("");
   const [seed, setSeed] = useState("123");
   const [roomName, setRoomName] = useState("");
