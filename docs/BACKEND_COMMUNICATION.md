@@ -1,27 +1,28 @@
 # Guía de Comunicación con el Backend
 
-Esta guía proporciona información sobre cómo el frontend se comunica con el backend. Incluye detalles sobre los endpoints utilizados, el formato de los datos, y la estructura de las solicitudes y respuestas.
+Esta guía proporciona información sobre cómo el frontend se comunica con el backend. Incluye detalles sobre los endpoints utilizados, el formato de los datos y la estructura de las solicitudes y respuestas.
 
 ## Tabla de Contenidos
 
 - [Descripción General](#descripción-general)
-- [Estructura de Carpetas](#estructura-carpetas)
+- [Estructura de Carpetas](#estructura-de-carpetas)
 - [Endpoints del Backend](#endpoints-del-backend)
-  - [Autenticación](#autenticación)
-  - [Mensajería](#mensajería)
   - [Gestión de Salas](#gestión-de-salas)
+  - [Mensajería](#mensajería)
 - [Formato de Solicitudes y Respuestas](#formato-de-solicitudes-y-respuestas)
-- [Estructura del Adaptador](#estructura-del-adaptador)
+- [Estructura de Comunicación con el Backend](#estructura-de-comunicación-con-el-backend)
 - [Ejemplos de Integración](#ejemplos-de-integración)
-- [Archivos a Revisar para Comunicación Backend](#archivos-a-revisar-para-comunicación-backend)
+- [Archivos Clave para la Comunicación con el Backend](#archivos-clave-para-la-comunicación-con-el-backend)
 
 ---
 
 ## Descripción General
 
-El frontend de este proyecto se comunica con el backend mediante una serie de endpoints REST. El backend está diseñado para ser escalable y seguro, proporcionando funcionalidades como autenticación de usuarios, gestión de salas de chat y mensajería en tiempo real.
+El frontend de este proyecto se comunica con el backend mediante una serie de endpoints REST utilizando `axios` para realizar las solicitudes HTTP. El backend está diseñado para ser escalable y seguro, proporcionando funcionalidades como gestión de salas de chat y mensajería.
 
-La comunicación entre el frontend y el backend se maneja mediante HTTP, y los datos se envían en formato JSON. Además, se está desarrollando un adaptador que permitirá al frontend interactuar con un backend en Python que ya está en producción para un proyecto similar.
+La comunicación entre el frontend y el backend se maneja mediante HTTP, y los datos se envían en formato JSON.
+
+La autenticación de usuarios se maneja a través de **Firebase Authentication**, utilizando proveedores como Google.
 
 ## Estructura de Carpetas
 
@@ -59,11 +60,8 @@ whatsApp-web-frontend/
 │   │   └── SideBarChat.js   # Componente para cada chat listado en la barra lateral
 │   ├── data/                # Archivos de datos estáticos o simulados
 │   │   └── mockRoomsData.js # Datos simulados para las salas de chat
-│   ├── globalContext/       # Archivos de Context API para la gestión global del estado
-│   │   ├── reducer.js       # Lógica para actualizar el estado global
-│   │   └── StateProvider.js # Proveedor de estado global para la aplicación
 │   ├── redux/               # Store y reducers de Redux
-│   │   ├── messages/        # Reducers específicos para la gestión de mensajes
+│   │   ├── messages/        # Reducers y acciones para la gestión de mensajes y salas
 │   │   ├── rootReducer.js   # Combinación de todos los reducers
 │   │   └── store.js         # Configuración del store de Redux
 │   ├── utils/               # Funciones utilitarias
@@ -81,41 +79,38 @@ whatsApp-web-frontend/
 └── README.md                # Archivo README del proyecto
 ```
 
-
 ## Endpoints del Backend
 
-### Autenticación
+### Gestión de Salas
 
-La autenticación se realiza utilizando Firebase, pero el backend también tiene endpoints adicionales para manejar la autenticación de usuarios y tokens. Estos endpoints son:
+Los usuarios pueden ver y unirse a diferentes salas. Los endpoints para la gestión de salas incluyen:
 
-- **POST /api/login**: Permite a los usuarios autenticarse y obtener un token de acceso.
-  - **Solicitud**:
+- **GET /posts/room**: Obtiene una lista de todas las salas disponibles. Implementado en `src/api/api.js` con la función `getRooms()` que realiza una solicitud GET a `"http://localhost:3030/posts/room"`.
+
+  - **Respuesta**:
     ```json
-    {
-      "email": "usuario@ejemplo.com",
-      "password": "tu_contraseña"
-    }
+    [
+      {
+        "_id": "123456",
+        "name": "Sala de Amigos",
+        "roomMessages": []
+      },
+      {
+        "_id": "789012",
+        "name": "Sala de Trabajo",
+        "roomMessages": []
+      }
+    ]
     ```
+
+- **GET /posts/room/{id}**: Obtiene la información de una sala específica. La función `getSingleRoom(id)` en `src/api/api.js` realiza esta solicitud con una llamada GET a la URL con el `id` de la sala.
+
   - **Respuesta**:
     ```json
     {
-      "token": "jwt_token"
-    }
-    ```
-
-- **POST /api/register**: Permite registrar un nuevo usuario.
-  - **Solicitud**:
-    ```json
-    {
-      "nombre": "Juan Pérez",
-      "email": "usuario@ejemplo.com",
-      "password": "tu_contraseña"
-    }
-    ```
-  - **Respuesta**:
-    ```json
-    {
-      "mensaje": "Usuario registrado con éxito"
+      "_id": "123456",
+      "name": "Sala de Amigos",
+      "roomMessages": []
     }
     ```
 
@@ -123,120 +118,150 @@ La autenticación se realiza utilizando Firebase, pero el backend también tiene
 
 Los mensajes entre los usuarios se manejan a través de los siguientes endpoints:
 
-- **GET /api/messages/{roomId}**: Obtiene todos los mensajes de una sala específica.
-  - **Respuesta**:
-    ```json
-    [
-      {
-        "usuario": "Juan Pérez",
-        "mensaje": "Hola a todos",
-        "timestamp": "2024-12-01T12:34:56Z"
-      },
-      {
-        "usuario": "María Gómez",
-        "mensaje": "¡Hola, Juan!",
-        "timestamp": "2024-12-01T12:35:10Z"
-      }
-    ]
-    ```
+- **POST /posts/message**: Envía un nuevo mensaje a una sala.
 
-- **POST /api/messages/{roomId}**: Envía un nuevo mensaje a la sala especificada.
   - **Solicitud**:
-    ```json
-    {
-      "usuario": "Juan Pérez",
-      "mensaje": "¿Cómo están todos?"
-    }
-    ```
-  - **Respuesta**:
-    ```json
-    {
-      "mensaje": "Mensaje enviado con éxito"
-    }
-    ```
-
-### Gestión de Salas
-
-Los usuarios pueden crear y unirse a diferentes salas. Los endpoints para la gestión de salas incluyen:
-
-- **GET /api/rooms**: Obtiene una lista de todas las salas disponibles. Esta función se implementa en `src/api/api.js` ✔️ con la función `getRooms()`, la cual realiza una solicitud GET a `"http://localhost:3030/posts/room"`.
-  - **Respuesta**:
-    ```json
-    [
-      {
-        "roomId": "123456",
-        "nombre": "Sala de Amigos"
-      },
-      {
-        "roomId": "789012",
-        "nombre": "Sala de Trabajo"
-      }
-    ]
-    ```
-
-- **GET /api/rooms/{id}**: Obtiene la información de una sala específica. La función `getSingleRoom(id)` en `src/api/api.js` realiza esta solicitud con una llamada GET a la URL con el `id` de la sala.
-
-- **POST /api/rooms**: Crea una nueva sala de chat.
-  - **Solicitud**:
-    ```json
-    {
-      "nombre": "Sala de Amigos"
-    }
-    ```
-  - **Respuesta**:
     ```json
     {
       "roomId": "123456",
-      "mensaje": "Sala creada con éxito"
+      "name": "Juan Pérez",
+      "message": "¿Cómo están todos?"
+    }
+    ```
+  - **Respuesta**:
+    ```json
+    {
+      "message": "Mensaje enviado con éxito"
     }
     ```
 
+*Nota:* La función `addMessage(data)` en `src/api/api.js` aún no está completamente implementada y actualmente solo muestra un mensaje en consola.
+
 ## Formato de Solicitudes y Respuestas
 
-Todas las solicitudes al backend deben incluir un encabezado `Content-Type: application/json` para especificar que los datos se envían en formato JSON. Si se requiere autenticación, también se debe incluir un encabezado `Authorization` con el token JWT proporcionado después de iniciar sesión.
+Todas las solicitudes al backend se realizan utilizando `axios` y deben incluir un encabezado `Content-Type: application/json` para especificar que los datos se envían en formato JSON.
+
+No se requieren encabezados de autenticación para las solicitudes al backend, ya que la autenticación se maneja en el frontend con Firebase.
 
 ### Ejemplo de Encabezado de Solicitud
+
 ```http
-Authorization: Bearer jwt_token
 Content-Type: application/json
 ```
 
-## Estructura del Adaptador
+## Estructura de Comunicación con el Backend
 
-El adaptador se encargará de conectar el frontend con el backend escrito en Python. La idea del adaptador es traducir las solicitudes del frontend en un formato compatible con el backend existente, permitiendo así la interoperabilidad entre ambos sistemas. La estructura del adaptador incluye:
+La comunicación con el backend se maneja principalmente a través de los siguientes archivos:
 
-- **Controladores de Solicitudes**: Intercepta las solicitudes del frontend y las adapta según los requerimientos del backend Python.
-- **Manejo de Errores**: El adaptador incluye mecanismos para manejar errores comunes y asegurar la respuesta adecuada al frontend.
-- **Compatibilidad con REST y WebSockets**: El adaptador manejará tanto las solicitudes REST como las conexiones WebSocket para garantizar que las comunicaciones en tiempo real funcionen sin problemas.
+- **`src/api/api.js`**: Contiene funciones que realizan las solicitudes HTTP al backend utilizando `axios`.
+
+- **`src/redux/messages/messages-actions.js`**: Define las acciones de Redux relacionadas con las salas y los mensajes, y utiliza las funciones de `api.js`.
+
+- **`src/redux/messages/messages-reducers.js`**: Maneja el estado relacionado con las salas y los mensajes en el store de Redux.
 
 ## Ejemplos de Integración
 
-A continuación, se muestra un ejemplo de cómo integrar el envío de un mensaje desde el frontend al backend utilizando el adaptador:
+A continuación, se muestra un ejemplo de cómo obtener las salas desde el backend y almacenarlas en el estado de Redux:
 
 ```javascript
-async function enviarMensaje(roomId, usuario, mensaje) {
-  const respuesta = await fetch(`/api/messages/${roomId}`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${tuToken}`
-    },
-    body: JSON.stringify({ usuario, mensaje })
-  });
-  const datos = await respuesta.json();
-  if (respuesta.ok) {
-    console.log('Mensaje enviado:', datos.mensaje);
-  } else {
-    console.error('Error al enviar mensaje:', datos.error);
+// src/redux/messages/messages-actions.js
+
+import * as ACTIONS from "./message-actionTypes";
+import * as api from "../../api/api";
+
+export const getRooms = () => async (dispatch) => {
+  try {
+    const rooms = await api.getRooms();
+    return dispatch({
+      type: ACTIONS.GET_ROOMS,
+      payload: rooms.data,
+    });
+  } catch (error) {
+    console.log(error);
   }
-}
+};
 ```
 
-Este ejemplo ilustra cómo el frontend puede interactuar con el backend, pasando el `roomId`, el `usuario` y el `mensaje` al endpoint correspondiente.
+En un componente React, puedes utilizar esta acción para cargar las salas:
+
+```javascript
+// src/components/SideBar.js
+
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { getRooms } from "../redux/messages/messages-actions";
+import SideBarChat from "./SideBarChat";
+
+function SideBar() {
+  const dispatch = useDispatch();
+  const rooms = useSelector((state) => state.rooms.rooms);
+
+  useEffect(() => {
+    dispatch(getRooms());
+  }, [dispatch]);
+
+  return (
+    <div className="sidebar">
+      {/* Renderiza las salas */}
+      {rooms.map((room) => (
+        <SideBarChat key={room._id} id={room._id} name={room.name} />
+      ))}
+    </div>
+  );
+}
+
+export default SideBar;
+```
+
+## Archivos Clave para la Comunicación con el Backend
+
+- **`src/api/api.js`**: Contiene las funciones `getRooms()`, `getSingleRoom(id)` y `addMessage(data)` que se comunican con el backend.
+
+- **`src/redux/messages/messages-actions.js`**: Define las acciones `getRooms()`, `setUser(data)` y `addMessage(roomId, message)`.
+
+- **`src/redux/messages/messages-reducers.js`**: Maneja el estado de `rooms`, `user` y actualiza el estado cuando se obtienen salas o se añade un mensaje.
+
+- **`src/firebase.js`**: Configuración de Firebase para la autenticación de usuarios.
+
+## Autenticación con Firebase
+
+La autenticación en la aplicación se maneja utilizando **Firebase Authentication**. En `src/firebase.js`, se configura la conexión con Firebase y se exportan `auth` y `provider` para usarlos en los componentes que requieren autenticación.
+
+Ejemplo de uso en un componente de inicio de sesión:
+
+```javascript
+// src/components/login/Login.js
+
+import React from "react";
+import { auth, provider } from "../../firebase";
+import { useDispatch } from "react-redux";
+import { setUser } from "../../redux/messages/messages-actions";
+import "./login.css";
+
+function Login() {
+  const dispatch = useDispatch();
+
+  const signIn = () => {
+    auth
+      .signInWithPopup(provider)
+      .then((result) => {
+        dispatch(setUser(result.user));
+      })
+      .catch((error) => alert(error.message));
+  };
+
+  return (
+    <div className="login">
+      <button onClick={signIn}>Iniciar sesión con Google</button>
+    </div>
+  );
+}
+
+export default Login;
+```
 
 ---
 
 Si tienes alguna pregunta o necesitas más información sobre cómo comunicarte con el backend, no dudes en abrir un "issue" en el repositorio o consultar la documentación oficial del proyecto.
 
 [Volver al README](../README.md)
-
