@@ -27,38 +27,43 @@ const SideBar = () => {
   });
   const navigate = useNavigate();
 
-  // Agregar depuración para verificar el estado de las salas
-  console.log("Salas actuales:", rooms);
+  // Depuración inicial del estado de las salas
+  console.log("Salas iniciales:", rooms);
 
   const addNewChat = () => {
-    const roomName = prompt("Please enter name for chat");
+    const roomName = prompt("Por favor, ingrese el nombre de la nueva sala de chat:");
 
-    if (roomName) {
+    if (roomName && roomName.trim() !== "") {
       const newRoom = {
         _id: `${rooms.length + 1}`,
-        name: roomName,
+        name: roomName.trim(),
         roomMessages: [],
       };
       setRooms([...rooms, newRoom]);
-      console.log("Nueva sala añadida:", newRoom);
+      console.log("Nueva sala añadida exitosamente:", newRoom);
+    } else {
+      console.warn("No se ingresó un nombre válido para la sala.");
     }
   };
 
   const handleRoomClick = (roomId) => {
-    console.log("Room clickeado y navegando a:", `/rooms/${roomId}`);
-    // Validar si el ID del room existe
+    console.log("Room clickeado:", roomId);
+
+    // Verificar si la sala existe antes de navegar
     const roomExists = rooms.find((room) => room._id === roomId);
     if (roomExists) {
+      console.log("Navegando a la sala:", `/rooms/${roomId}`);
       navigate(`/rooms/${roomId}`);
     } else {
-      console.error("Room con ID no encontrado:", roomId);
+      console.error("Error: Sala con ID no encontrada:", roomId);
+      alert(`La sala con ID ${roomId} no existe.`);
     }
   };
 
   return (
     <div className="sideBar">
       <div className="sideBar_header">
-        <Avatar src={user?.photoURL} />
+        <Avatar src={user?.photoURL} alt={user?.displayName || "User"} />
         <div className="sidebar_headerRight">
           <IconButton>
             <DonutLargeIcon />
@@ -71,23 +76,29 @@ const SideBar = () => {
           </IconButton>
         </div>
       </div>
+
       <div className="sideBar_search">
         <div className="searchBar_container">
           <SearchIcon />
-          <input type="text" placeholder="Search or start new" />
+          <input type="text" placeholder="Buscar o iniciar nuevo chat" />
         </div>
       </div>
+
       <div className="sideBar_chat">
-        {/* Chat para crear nueva sala */}
+        {/* Chat para crear una nueva sala */}
         <SideBarChat addNewChat={addNewChat} />
-        {/* Renderizar salas existentes */}
-        {rooms && rooms.map((room) => (
-          <SideBarChat
-            key={room._id}
-            room={room}
-            onClick={() => handleRoomClick(room._id)}
-          />
-        ))}
+        {/* Renderizar las salas existentes */}
+        {rooms && rooms.length > 0 ? (
+          rooms.map((room) => (
+            <SideBarChat
+              key={room._id}
+              room={room}
+              onClick={() => handleRoomClick(room._id)}
+            />
+          ))
+        ) : (
+          <p>No hay salas disponibles.</p>
+        )}
       </div>
     </div>
   );
