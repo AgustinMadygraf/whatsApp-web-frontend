@@ -1,9 +1,12 @@
+/*
+Path: src/components/SideBarChat.js
+Este archivo contendrá el componente de la barra lateral de chat.
+*/
+
 import React, { useState, useEffect } from "react";
 import { Avatar } from "@material-ui/core";
 import "./sideBarChat.css";
-import db from "../firebase";
 import { Link } from "react-router-dom";
-import { addRooms } from "../api/api";
 
 const SideBarChat = ({ addNewChat, room }) => {
   const [messages, setMessages] = useState("");
@@ -26,7 +29,6 @@ const SideBarChat = ({ addNewChat, room }) => {
           message: "",
         },
       };
-      addRooms(data);
     }
   };
 
@@ -51,7 +53,7 @@ const SideBarChat = ({ addNewChat, room }) => {
               color: "#3a3838",
             }}
           >
-            {room.roomMessages[0].message != undefined
+            {room.roomMessages[0].message !== undefined
               ? room.roomMessages[0]?.message +   ".."
               : "..."}
           </p>

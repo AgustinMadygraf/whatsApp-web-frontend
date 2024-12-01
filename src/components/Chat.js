@@ -3,7 +3,6 @@ import {
   AttachFile,
   SearchOutlined,
   MoreVert,
-  InsertEmoticonIcon,
 } from "@material-ui/icons";
 import MoodIcon from "@material-ui/icons/Mood";
 import MicNoneIcon from "@material-ui/icons/MicNone";
