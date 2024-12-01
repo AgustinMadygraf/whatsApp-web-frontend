@@ -1,3 +1,8 @@
+/*
+Path: src/components/SideBar.js
+Este archivo contiene el componente de la barra lateral de chat.
+*/
+
 import React, { useState } from "react";
 import { Avatar, IconButton } from "@mui/material";
 import DonutLargeIcon from "@mui/icons-material/DonutLarge";
