@@ -24,23 +24,17 @@ const reducer = (state = initialState, action) => {
         user: action.payload,
       };
 
-    case ACTIONS.UPDATE_ROOM:
+    case ACTIONS.ADD_MESSAGE:
       return {
         ...state,
-        rooms: [
-          ...state.rooms,
-          {
-            _id: action.payload.roomId,
-            name: action.payload.roomName,
-            roomMessages: [
-              {
-                _id: action.payload.messageId,
-                name: action.payload.name,
-                date: action.payload.date,
-              },
-            ],
-          },
-        ],
+        rooms: state.rooms.map((room) =>
+          room._id === action.payload.roomId
+            ? {
+                ...room,
+                roomMessages: [...room.roomMessages, action.payload.message],
+              }
+            : room
+        ),
       };
 
     default:

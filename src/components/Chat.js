@@ -61,7 +61,6 @@ function Chat() {
 
         <div className="chat_headerInfo">
           <h3>{roomName}</h3>
-
           <p>last seen at {new Date().toLocaleTimeString()}</p>
         </div>
 
@@ -78,20 +77,24 @@ function Chat() {
         </div>
       </div>
       <div className="chat_body">
-        {messages.map((message) => (
-          <p
-            key={message.id}
-            className={`chat_message ${
-              message.name === user.displayName && "chat_reciever"
-            }`}
-          >
-            <span className="chat_name">{message.name} </span>
-            {message.message}
-            <span className="chat_timestamp">
-              {new Date(message.date).toLocaleTimeString()}
-            </span>
-          </p>
-        ))}
+        {messages.length === 0 ? (
+          <p>No hay mensajes aún</p>
+        ) : (
+          messages.map((message) => (
+            <p
+              key={message.id}
+              className={`chat_message ${
+                message.name === user.displayName && "chat_reciever"
+              }`}
+            >
+              <span className="chat_name">{message.name} </span>
+              {message.message}
+              <span className="chat_timestamp">
+                {new Date(message.date).toLocaleTimeString()}
+              </span>
+            </p>
+          ))
+        )}
       </div>
       <div className="chat_footer">
         <MoodIcon />

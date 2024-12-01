@@ -1,3 +1,8 @@
+/*
+Path: src/redux/messages/messages-actions.js
+Este archivo es donde se definen las acciones de Redux.
+*/
+
 import * as ACTIONS from "./message-actionTypes";
 import * as api from "../../api/api";
 
@@ -20,18 +25,9 @@ export const setUser = (data) => {
   };
 };
 
-export const updateRoomData = (data) => {
+export const addMessage = (roomId, message) => {
   return {
-    type: ACTIONS.UPDATE_ROOM,
-    payload: {
-      roomName: data.roomName,
-      roomId: data.roomId,
-      name: data.name,
-      message: data.message,
-      messageId: data.messageId,
-      date: data.date,
-    },
+    type: ACTIONS.ADD_MESSAGE,
+    payload: { roomId, message },
   };
 };
-
-

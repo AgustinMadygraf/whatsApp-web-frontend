@@ -25,6 +25,7 @@ function App() {
             <Routes>
               <Route path="/rooms/:roomId" element={<Chat />} />
               <Route path="/" element={<SideBar />} />
+              <Route path="*" element={<div>404 Not Found</div>} />
             </Routes>
           </Router>
         </div>

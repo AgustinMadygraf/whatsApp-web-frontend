@@ -3,7 +3,7 @@ Path: src/components/SideBar.js
 Este es el componente SideBar que se muestra en la pantalla principal de la aplicación.
 */
 
-import React, { useState} from "react";
+import React, { useState } from "react";
 import { Avatar, IconButton } from "@material-ui/core";
 import DonutLargeIcon from "@material-ui/icons/DonutLarge";
 import ChatIcon from "@material-ui/icons/Chat";
@@ -19,9 +19,21 @@ const mockRoomsData = [
 ];
 
 const SideBar = () => {
-  const [rooms] = useState(mockRoomsData);
-
+  const [rooms, setRooms] = useState(mockRoomsData);
   const user = useSelector((state) => state.rooms.user);
+
+  const addNewChat = () => {
+    const roomName = prompt("Please enter name for chat");
+
+    if (roomName) {
+      const newRoom = {
+        _id: `${rooms.length + 1}`,
+        name: roomName,
+        roomMessages: [],
+      };
+      setRooms([...rooms, newRoom]);
+    }
+  };
 
   return (
     <div className="sideBar">
@@ -46,7 +58,7 @@ const SideBar = () => {
         </div>
       </div>
       <div className="sideBar_chat">
-        <SideBarChat addNewChat={"hello"} />
+        <SideBarChat addNewChat={addNewChat} />
         {rooms &&
           rooms.map((room) => <SideBarChat key={room._id} room={room} />)}
       </div>
