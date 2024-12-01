@@ -12,13 +12,13 @@ import ChatBody from "./ChatBody";
 import ChatFooter from "./ChatFooter";
 
 const mockRoomsData = {
-  1: {
+  "1": {
     name: "Room 1",
     roomMessages: [
       { id: 1, name: "User1", message: "Hello Room 1!", date: new Date() },
     ],
   },
-  2: {
+  "2": {
     name: "Room 2",
     roomMessages: [
       { id: 1, name: "User2", message: "Hello Room 2!", date: new Date() },
@@ -28,7 +28,7 @@ const mockRoomsData = {
 
 function Chat() {
   const user = useSelector((state) => state.rooms.user);
-  const { roomId } = useParams();
+  const { roomId } = useParams(); // roomId siempre será una cadena
   const [roomName, setRoomName] = useState("");
   const [messages, setMessages] = useState([]);
 
@@ -36,6 +36,7 @@ function Chat() {
     if (roomId) {
       console.log("Cargando datos del room:", roomId);
 
+      // Asegurarte de que roomId coincida con las claves de mockRoomsData
       const roomData = mockRoomsData[roomId];
       if (roomData) {
         setRoomName(roomData.name);

@@ -38,6 +38,7 @@ const SideBar = () => {
   };
 
   const handleRoomClick = (roomId) => {
+    console.log("ID de la sala clickeada:", roomId); // Debugging
     const roomExists = rooms.find((room) => room._id === roomId);
     if (roomExists) {
       console.log("Navegando a la sala:", `/rooms/${roomId}`);
@@ -47,7 +48,7 @@ const SideBar = () => {
       alert(`La sala con ID ${roomId} no existe.`);
     }
   };
-
+  
   return (
     <div className="sideBar">
       <div className="sideBar_header">
