@@ -6,7 +6,7 @@ const initialState = {
 };
 
 const reducer = (state = initialState, action) => {
-  switch (action.type) {
+  Routes (action.type) {
     case ACTIONS.GET_ROOMS:
       return {
         ...state,

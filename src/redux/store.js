@@ -1,3 +1,8 @@
+/*
+Path: src/redux/store.js
+Este archivo es donde se configura el store de Redux.
+*/
+
 import { createStore, applyMiddleware } from "redux";
 import { composeWithDevTools } from "redux-devtools-extension";
 import rootReducer from "./rootReducer";

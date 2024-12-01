@@ -2,7 +2,10 @@
 Path: src/firebase.js
 Este archivo es donde se configura la conexión con Firebase.
 */
-import firebase from "firebase";
+
+import { initializeApp } from 'firebase/app';
+import { getAuth, GoogleAuthProvider } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_APIKEY,
@@ -13,10 +16,10 @@ const firebaseConfig = {
   appId: process.env.REACT_APP_APPID,
 };
 
-const firebaseApp = firebase.initializeApp(firebaseConfig);
-const db = firebaseApp.firestore();
-const auth = firebase.auth();
-const provider = new firebase.auth.GoogleAuthProvider();
+const firebaseApp = initializeApp(firebaseConfig);
+const db = getFirestore(firebaseApp);
+const auth = getAuth();
+const provider = new GoogleAuthProvider();
 
 export { auth, provider };
 export default db;
