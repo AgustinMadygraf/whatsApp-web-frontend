@@ -6,10 +6,10 @@ Este es el componente Chat que se muestra en la pantalla principal de la aplicac
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { Avatar, IconButton } from "@material-ui/core";
-import { AttachFile, SearchOutlined, MoreVert } from "@material-ui/icons";
-import MoodIcon from "@material-ui/icons/Mood";
-import MicNoneIcon from "@material-ui/icons/MicNone";
+import { Avatar, IconButton } from "@mui/material";
+import { AttachFile, SearchOutlined, MoreVert } from "@mui/icons-material";
+import MoodIcon from "@mui/icons-material/Mood";
+import MicNoneIcon from "@mui/icons-material/MicNone";
 import "./chat.css";
 
 const mockRoomData = {
@@ -30,8 +30,12 @@ function Chat() {
 
   const avatar = `https://avatars.dicebear.com/api/human/${seed}.svg`;
 
+  // Debugging useParams
+  console.log("Room ID actual:", roomId);
+
   useEffect(() => {
     if (roomId) {
+      console.log("Cargando datos del room:", roomId);
       setRoomName(mockRoomData.name);
       setMessages(mockRoomData.roomMessages);
     }

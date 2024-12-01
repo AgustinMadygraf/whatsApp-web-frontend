@@ -4,7 +4,7 @@ Este archivo es donde se configura el componente Login.
 */
 
 import React from "react";
-import { Button } from "@mui/material"; // Cambiado de @material-ui/core a @mui/material
+import { Button } from "@mui/material";
 import "./login.css";
 import { useDispatch } from "react-redux";
 import { setUser } from "../../redux/messages/messages-actions";

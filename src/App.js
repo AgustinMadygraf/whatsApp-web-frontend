@@ -8,26 +8,39 @@ import React from "react";
 import "./App.css";
 import SideBar from "./components/SideBar";
 import Chat from "./components/Chat";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { useSelector } from "react-redux";
 import Login from "./components/login/login";
 
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <SideBar />,
+    children: [
+      {
+        path: "rooms/:roomId",
+        element: <Chat />,
+      },
+      {
+        path: "*",
+        element: <div>404 Not Found</div>,
+      },
+    ],
+  },
+]);
+console.log("Router configurado:", router);
+
 function App() {
   const user = useSelector((state) => state.rooms.user);
+  console.log("Usuario actual:", user); // Debugging statement
+
   return (
     <div className="App">
       {!user ? (
         <Login />
       ) : (
         <div className="app_body">
-          <Router>
-            <SideBar />
-            <Routes>
-              <Route path="/rooms/:roomId" element={<Chat />} />
-              <Route path="/" element={<SideBar />} />
-              <Route path="*" element={<div>404 Not Found</div>} />
-            </Routes>
-          </Router>
+          <RouterProvider router={router} />
         </div>
       )}
     </div>

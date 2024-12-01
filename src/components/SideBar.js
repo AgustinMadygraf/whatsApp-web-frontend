@@ -12,6 +12,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import "./sidebar.css";
 import SideBarChat from "./SideBarChat";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const mockRoomsData = [
   { _id: "1", name: "Room 1", roomMessages: [{ message: "Hello Room 1" }] },
@@ -21,6 +22,7 @@ const mockRoomsData = [
 const SideBar = () => {
   const [rooms, setRooms] = useState(mockRoomsData);
   const user = useSelector((state) => state.rooms.user);
+  const navigate = useNavigate();
 
   const addNewChat = () => {
     const roomName = prompt("Please enter name for chat");
@@ -33,6 +35,11 @@ const SideBar = () => {
       };
       setRooms([...rooms, newRoom]);
     }
+  };
+
+  const handleRoomClick = (roomId) => {
+    console.log("Room clickeado:", roomId);
+    navigate(`/rooms/${roomId}`);
   };
 
   return (
@@ -60,7 +67,9 @@ const SideBar = () => {
       <div className="sideBar_chat">
         <SideBarChat addNewChat={addNewChat} />
         {rooms &&
-          rooms.map((room) => <SideBarChat key={room._id} room={room} />)}
+          rooms.map((room) => (
+            <SideBarChat key={room._id} room={room} onClick={() => handleRoomClick(room._id)} />
+          ))}
       </div>
     </div>
   );
