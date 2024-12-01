@@ -31,7 +31,8 @@ const validateEnvVariables = () => {
     if (!process.env[key]) {
       console.error(`Error: Falta la variable de entorno ${key}`);
     } else {
-      console.log(`${key}: ${process.env[key]}`);
+      //console.log(`${key}: ${process.env[key]}`);
+      console.log('Firebase Configurado');
     }
   });
 };
