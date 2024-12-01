@@ -9,7 +9,8 @@ import "./App.css";
 import SideBar from "./components/SideBar";
 import Chat from "./components/Chat";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { setUser } from "./redux/messages/messages-actions";
 import Login from "./components/login/login";
 
 const router = createBrowserRouter([
@@ -31,16 +32,20 @@ const router = createBrowserRouter([
 
 function App() {
   const user = useSelector((state) => state.rooms.user);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    // Restaurar usuario desde localStorage
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      dispatch(setUser(JSON.parse(storedUser)));
+    }
+  }, [dispatch]);
 
   // Depuración del estado global del usuario
   useEffect(() => {
     console.log("Usuario actual desde Redux:", user);
   }, [user]);
-
-  // Validar si el usuario está definido
-  if (!user) {
-    console.warn("Usuario no encontrado. Redirigiendo al login...");
-  }
 
   return (
     <div className="App">

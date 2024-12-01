@@ -1,6 +1,6 @@
 /*
-Path: src/components/login/login.js
-Este archivo es donde se configura el componente Login.
+Path: src/components/login/login.jsPath: src/components/login/login.js
+Este archivo es donde se configura el componente Login.Este archivo es donde se configura el componente Login.
 */
 
 import React from "react";
@@ -18,8 +18,14 @@ const Login = () => {
     console.log("Intentando iniciar sesión con Google...");
     signInWithPopup(auth, provider)
       .then((result) => {
-        console.log("Inicio de sesión exitoso:", result.user);
-        dispatch(setUser(result.user));
+        const user = result.user;
+        console.log("Inicio de sesión exitoso:", user);
+
+        // Guardar en localStorage
+        localStorage.setItem("user", JSON.stringify(user));
+
+        // Actualizar Redux
+        dispatch(setUser(user));
       })
       .catch((err) => {
         console.error("Error en el inicio de sesión:", err.message);
