@@ -1,26 +1,26 @@
+/*
+Path: src/components/login/login.js
+Este archivo es donde se configura el componente Login.
+*/
+
 import React from "react";
 import { Button } from "@material-ui/core";
 import "./login.css";
-import {useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import { setUser } from "../../redux/messages/messages-actions";
 import { auth, provider } from "../../firebase";
+import { signInWithPopup } from "firebase/auth";
 
 const Login = () => {
   const dispatch = useDispatch();
 
-
   const signIn = () => {
-    auth
-      .signInWithPopup(provider)
+    signInWithPopup(auth, provider)
       .then((result) => {
-  
-        // setUserData(result.user)
-        dispatch(setUser(result.user))
-        
+        dispatch(setUser(result.user));
       })
       .catch((err) => alert(err.message));
   };
-
 
   return (
     <div className="login">
@@ -32,7 +32,6 @@ const Login = () => {
         <div className="login_text">
           <h6>Sign in to WhatsApp</h6>
         </div>
-
         <Button onClick={signIn}>Sign with Google</Button>
       </div>
     </div>
