@@ -17,26 +17,11 @@ import LogoutButton from "./LogoutButton";
 import { mockRoomsData } from "../data/mockRoomsData";
 
 const SideBar = () => {
-  const [rooms, setRooms] = useState(mockRoomsData);
+  const [rooms] = useState(mockRoomsData);
   const user = useSelector((state) => state.rooms.user);
   const navigate = useNavigate();
 
   console.log("Salas iniciales:", rooms);
-
-  const addNewChat = () => {
-    const roomName = prompt("Por favor, ingrese el nombre de la nueva sala de chat:");
-    if (roomName && roomName.trim() !== "") {
-      const newRoom = {
-        _id: `${rooms.length + 1}`,
-        name: roomName.trim(),
-        roomMessages: [],
-      };
-      setRooms((prevRooms) => [...prevRooms, newRoom]);
-      console.log("Nueva sala añadida exitosamente:", newRoom);
-    } else {
-      console.warn("No se ingresó un nombre válido para la sala.");
-    }
-  };
 
   const handleRoomClick = (roomId) => {
     console.log("ID de la sala clickeada:", roomId);
