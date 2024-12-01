@@ -4,7 +4,7 @@ Este archivo es donde se configura el componente Login.
 */
 
 import React from "react";
-import { Button } from "@material-ui/core";
+import { Button } from "@mui/material"; // Cambiado de @material-ui/core a @mui/material
 import "./login.css";
 import { useDispatch } from "react-redux";
 import { setUser } from "../../redux/messages/messages-actions";
@@ -26,7 +26,7 @@ const Login = () => {
         alert(err.message);
       });
   };
- 
+
   return (
     <div className="login">
       <div className="login_container">
@@ -37,7 +37,9 @@ const Login = () => {
         <div className="login_text">
           <h6>Sign in to WhatsApp</h6>
         </div>
-        <Button onClick={signIn}>Sign with Google</Button>
+        <Button variant="contained" color="primary" onClick={signIn}>
+          Sign with Google
+        </Button>
       </div>
     </div>
   );
