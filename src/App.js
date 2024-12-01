@@ -4,7 +4,7 @@ Este es el componente principal de la aplicación. Aquí se importan los compone
 Chat y Login. Además, se utiliza el hook useSelector para obtener el estado de la aplicación.
 */
 
-import React from "react";
+import React, { useEffect } from "react";
 import "./App.css";
 import SideBar from "./components/SideBar";
 import Chat from "./components/Chat";
@@ -28,11 +28,19 @@ const router = createBrowserRouter([
     ],
   },
 ]);
-console.log("Router configurado:", router);
 
 function App() {
   const user = useSelector((state) => state.rooms.user);
-  console.log("Usuario actual desde Redux:", user); // Debugging statement
+
+  // Depuración del estado global del usuario
+  useEffect(() => {
+    console.log("Usuario actual desde Redux:", user);
+  }, [user]);
+
+  // Validar si el usuario está definido
+  if (!user) {
+    console.warn("Usuario no encontrado. Redirigiendo al login...");
+  }
 
   return (
     <div className="App">

@@ -12,19 +12,26 @@ import MoodIcon from "@mui/icons-material/Mood";
 import MicNoneIcon from "@mui/icons-material/MicNone";
 import "./chat.css";
 
-const mockRoomData = {
-  name: "Mock Room",
-  roomMessages: [
-    { id: 1, name: "User1", message: "Hello!", date: new Date() },
-    { id: 2, name: "User2", message: "Hi there!", date: new Date() },
-  ],
+const mockRoomsData = {
+  1: {
+    name: "Room 1",
+    roomMessages: [
+      { id: 1, name: "User1", message: "Hello Room 1!", date: new Date() },
+    ],
+  },
+  2: {
+    name: "Room 2",
+    roomMessages: [
+      { id: 1, name: "User2", message: "Hello Room 2!", date: new Date() },
+    ],
+  },
 };
 
 function Chat() {
   const user = useSelector((state) => {
     console.log("Estado global completo:", state);
     return state.rooms.user;
-    });
+  });
   const [input, setInput] = useState("");
   const [seed, setSeed] = useState("123");
   const [roomName, setRoomName] = useState("");
@@ -33,14 +40,23 @@ function Chat() {
 
   const avatar = `https://avatars.dicebear.com/api/human/${seed}.svg`;
 
-  // Debugging useParams
+  // Depuración del `roomId`
   console.log("Room ID actual:", roomId);
 
   useEffect(() => {
     if (roomId) {
       console.log("Cargando datos del room:", roomId);
-      setRoomName(mockRoomData.name);
-      setMessages(mockRoomData.roomMessages);
+
+      // Validar si el `roomId` existe en los datos simulados
+      const roomData = mockRoomsData[roomId];
+      if (roomData) {
+        setRoomName(roomData.name);
+        setMessages(roomData.roomMessages);
+      } else {
+        console.error("Room ID no encontrado:", roomId);
+        setRoomName("Room no encontrado");
+        setMessages([]);
+      }
     }
   }, [roomId]);
 
@@ -50,15 +66,21 @@ function Chat() {
 
   const btnHandler = (e) => {
     e.preventDefault();
+    if (!input.trim()) {
+      console.warn("El mensaje está vacío. No se enviará.");
+      return;
+    }
+
     const newMessage = {
       id: messages.length + 1,
-      name: user.displayName,
-      message: input,
+      name: user?.displayName || "Anonimo",
+      message: input.trim(),
       date: new Date(),
     };
 
-    setMessages([...messages, newMessage]);
+    setMessages((prevMessages) => [...prevMessages, newMessage]);
     setInput("");
+    console.log("Mensaje enviado:", newMessage);
   };
 
   return (
@@ -68,7 +90,7 @@ function Chat() {
 
         <div className="chat_headerInfo">
           <h3>{roomName}</h3>
-          <p>last seen at {new Date().toLocaleTimeString()}</p>
+          <p>Last seen at {new Date().toLocaleTimeString()}</p>
         </div>
 
         <div className="chat_headerRight">
@@ -91,10 +113,10 @@ function Chat() {
             <p
               key={message.id}
               className={`chat_message ${
-                message.name === user.displayName && "chat_reciever"
+                message.name === user?.displayName && "chat_reciever"
               }`}
             >
-              <span className="chat_name">{message.name} </span>
+              <span className="chat_name">{message.name}</span>
               {message.message}
               <span className="chat_timestamp">
                 {new Date(message.date).toLocaleTimeString()}
@@ -105,16 +127,14 @@ function Chat() {
       </div>
       <div className="chat_footer">
         <MoodIcon />
-        <form>
+        <form onSubmit={btnHandler}>
           <input
             type="text"
             placeholder="Type a message"
             value={input}
             onChange={(e) => setInput(e.target.value)}
           />
-          <button type="submit" onClick={btnHandler}>
-            Send
-          </button>
+          <button type="submit">Send</button>
         </form>
         <MicNoneIcon />
       </div>

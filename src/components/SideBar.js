@@ -22,10 +22,13 @@ const mockRoomsData = [
 const SideBar = () => {
   const [rooms, setRooms] = useState(mockRoomsData);
   const user = useSelector((state) => {
-    console.log("Estado global completo:", state);
+    console.log("Estado global completo en SideBar:", state);
     return state.rooms.user;
-    });
+  });
   const navigate = useNavigate();
+
+  // Agregar depuración para verificar el estado de las salas
+  console.log("Salas actuales:", rooms);
 
   const addNewChat = () => {
     const roomName = prompt("Please enter name for chat");
@@ -37,12 +40,19 @@ const SideBar = () => {
         roomMessages: [],
       };
       setRooms([...rooms, newRoom]);
+      console.log("Nueva sala añadida:", newRoom);
     }
   };
 
   const handleRoomClick = (roomId) => {
-    console.log("Room clickeado:", roomId);
-    navigate(`/rooms/${roomId}`);
+    console.log("Room clickeado y navegando a:", `/rooms/${roomId}`);
+    // Validar si el ID del room existe
+    const roomExists = rooms.find((room) => room._id === roomId);
+    if (roomExists) {
+      navigate(`/rooms/${roomId}`);
+    } else {
+      console.error("Room con ID no encontrado:", roomId);
+    }
   };
 
   return (
@@ -68,11 +78,16 @@ const SideBar = () => {
         </div>
       </div>
       <div className="sideBar_chat">
+        {/* Chat para crear nueva sala */}
         <SideBarChat addNewChat={addNewChat} />
-        {rooms &&
-          rooms.map((room) => (
-            <SideBarChat key={room._id} room={room} onClick={() => handleRoomClick(room._id)} />
-          ))}
+        {/* Renderizar salas existentes */}
+        {rooms && rooms.map((room) => (
+          <SideBarChat
+            key={room._id}
+            room={room}
+            onClick={() => handleRoomClick(room._id)}
+          />
+        ))}
       </div>
     </div>
   );
