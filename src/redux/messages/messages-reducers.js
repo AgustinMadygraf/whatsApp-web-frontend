@@ -1,17 +1,23 @@
+/*
+Path src/redux/messages/messages-reducers.js
+Este archivo es donde se configura el reducer de Redux.
+*/
+
 import * as ACTIONS from "./message-actionTypes";
 
 const initialState = {
   user: null,
-
+  rooms: [], // Asegúrate de definir las propiedades necesarias en el estado inicial
 };
 
 const reducer = (state = initialState, action) => {
-  Routes (action.type) {
+  switch (action.type) {
     case ACTIONS.GET_ROOMS:
       return {
         ...state,
         rooms: action.payload,
       };
+
     case ACTIONS.SET_USER:
       return {
         ...state,
@@ -36,6 +42,7 @@ const reducer = (state = initialState, action) => {
           },
         ],
       };
+
     default:
       return state;
   }
