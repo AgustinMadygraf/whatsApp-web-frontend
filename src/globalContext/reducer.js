@@ -12,7 +12,7 @@ export const actionTypes = {
 };
 
 const reducer = (state, action) => {
-  Routes (action.type) {
+  switch (action.type) {
     case actionTypes.SET_USER:
       return {
         ...state,
