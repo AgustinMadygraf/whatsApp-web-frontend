@@ -15,13 +15,18 @@ const Login = () => {
   const dispatch = useDispatch();
 
   const signIn = () => {
+    console.log("Intentando iniciar sesión con Google...");
     signInWithPopup(auth, provider)
       .then((result) => {
+        console.log("Inicio de sesión exitoso:", result.user);
         dispatch(setUser(result.user));
       })
-      .catch((err) => alert(err.message));
+      .catch((err) => {
+        console.error("Error en el inicio de sesión:", err.message);
+        alert(err.message);
+      });
   };
-
+ 
   return (
     <div className="login">
       <div className="login_container">

@@ -16,6 +16,28 @@ const firebaseConfig = {
   appId: process.env.REACT_APP_APPID,
 };
 
+// Verifica si las variables de entorno están definidas
+const validateEnvVariables = () => {
+  const keys = [
+    'REACT_APP_APIKEY',
+    'REACT_APP_AUTHDOMAIN',
+    'REACT_APP_PROJECTID',
+    'REACT_APP_STORAGEBUCKET',
+    'REACT_APP_MESSAGINGSENDERID',
+    'REACT_APP_APPID',
+  ];
+
+  keys.forEach((key) => {
+    if (!process.env[key]) {
+      console.error(`Error: Falta la variable de entorno ${key}`);
+    } else {
+      console.log(`${key}: ${process.env[key]}`);
+    }
+  });
+};
+
+validateEnvVariables();
+
 const firebaseApp = initializeApp(firebaseConfig);
 const db = getFirestore(firebaseApp);
 const auth = getAuth();
