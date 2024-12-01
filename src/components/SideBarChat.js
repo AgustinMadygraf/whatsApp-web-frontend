@@ -9,7 +9,6 @@ import "./sideBarChat.css";
 import { Link } from "react-router-dom";
 
 const SideBarChat = ({ addNewChat, room }) => {
-  const [messages, setMessages] = useState("");
   const [seed, setSeed] = useState("123");
   const avatar = `https://avatars.dicebear.com/api/human/${seed}.svg`;
 
@@ -22,13 +21,7 @@ const SideBarChat = ({ addNewChat, room }) => {
 
     if (roomName) {
       //data base stuff
-      const data = {
-        name: roomName,
-        roomMessages: {
-          name: "",
-          message: "",
-        },
-      };
+
     }
   };
 

@@ -25,7 +25,6 @@ export const getSingleRoom = async (id) => {
 
 export const addMessage = async (data) => {
   try {
-    const url = `http://localhost:3030/posts/room/${data.id}`;
     console.log("running");
   } catch (error) {
     console.log(error);
