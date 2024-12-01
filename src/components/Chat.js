@@ -1,3 +1,8 @@
+/*
+Path: src/components/Chat.js
+Este es el componente Chat que se muestra en la pantalla principal de la aplicación.
+*/
+
 import { Avatar, IconButton } from "@material-ui/core";
 import {
   AttachFile,

@@ -1,3 +1,9 @@
+/*
+Path: src/App.js
+Este es el componente principal de la aplicación. Aquí se importan los componentes SideBar, 
+Chat y Login. Además, se utiliza el hook useSelector para obtener el estado de la aplicación.
+*/
+
 import React from "react";
 import "./App.css";
 import SideBar from "./components/SideBar";
@@ -19,10 +25,8 @@ function App() {
           <Router>
             <SideBar />
             <Routes>
-              <Route path="/rooms/:roomId">
-                <Chat />
-              </Route>
-              <Route path="/">{/* <Chat /> */}</Route>
+              <Route path="/rooms/:roomId" element={<Chat />} />
+              <Route path="/" element={<SideBar />} />
             </Routes>
           </Router>
         </div>
