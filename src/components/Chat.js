@@ -33,21 +33,19 @@ function Chat() {
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {
-    if (roomId) {
-      console.log("Cargando datos del room:", roomId);
-
-      // Asegurarte de que roomId coincida con las claves de mockRoomsData
+      console.log("Cargando datos para roomId:", roomId);
+    
       const roomData = mockRoomsData[roomId];
       if (roomData) {
+        console.log("Room encontrado:", roomData);
         setRoomName(roomData.name);
         setMessages(roomData.roomMessages);
       } else {
-        console.error("Room ID no encontrado:", roomId);
+        console.error("Room no encontrado para roomId:", roomId);
         setRoomName("Room no encontrado");
         setMessages([]);
       }
-    }
-  }, [roomId]);
+    }, [roomId]);
 
   const handleSendMessage = (message) => {
     if (!message.trim()) {

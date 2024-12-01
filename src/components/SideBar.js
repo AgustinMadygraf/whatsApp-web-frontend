@@ -38,16 +38,15 @@ const SideBar = () => {
   };
 
   const handleRoomClick = (roomId) => {
-    console.log("ID de la sala clickeada:", roomId); // Debugging
-    const roomExists = rooms.find((room) => room._id === roomId);
+    console.log("ID de la sala clickeada:", roomId);
+    const roomExists = rooms.find((room) => String(room._id) === roomId);
     if (roomExists) {
       console.log("Navegando a la sala:", `/rooms/${roomId}`);
       navigate(`/rooms/${roomId}`);
     } else {
       console.error("Error: Sala con ID no encontrada:", roomId);
-      alert(`La sala con ID ${roomId} no existe.`);
     }
-  };
+  }; 
   
   return (
     <div className="sideBar">

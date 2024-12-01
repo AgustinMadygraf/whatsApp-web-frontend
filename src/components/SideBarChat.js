@@ -44,7 +44,14 @@ const SideBarChat = ({
   return (
     <div
       className="sidebarChat"
-      onClick={!addNewChat ? () => onClick(room._id) : createChat}
+      onClick={
+        addNewChat
+          ? createChat
+          : () => {
+              console.log("Room clickeado con ID:", String(room._id)); // Depuración
+              onClick(String(room._id)); // Convertir room._id a cadena
+            }
+      }
     >
       {addNewChat ? (
         <h2 className="sidebarChat_addNew">Agregar nuevo Chat</h2>
@@ -59,7 +66,7 @@ const SideBarChat = ({
 SideBarChat.propTypes = {
   addNewChat: PropTypes.bool,
   room: PropTypes.shape({
-    _id: PropTypes.string,
+    _id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
     name: PropTypes.string,
     roomMessages: PropTypes.arrayOf(
       PropTypes.shape({
