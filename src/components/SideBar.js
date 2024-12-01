@@ -74,18 +74,18 @@ const SideBar = () => {
       </div>
 
       <div className="sideBar_chat">
-        <SideBarChat addNewChat={addNewChat} />
-        {rooms.length > 0 ? (
+        {/* Componente para agregar una nueva sala */}
+        <SideBarChat addNewChat={true} />
+        {/* Renderizar las salas existentes */}
+        {rooms.length > 0 &&
           rooms.map((room) => (
             <SideBarChat
               key={room._id}
               room={room}
               onClick={handleRoomClick}
+              addNewChat={false} 
             />
-          ))
-        ) : (
-          <p>No hay salas disponibles.</p>
-        )}
+          ))}
       </div>
     </div>
   );
