@@ -7,7 +7,7 @@ import * as ACTIONS from "./message-actionTypes";
 
 const initialState = {
   user: null,
-  rooms: [], // Asegúrate de definir las propiedades necesarias en el estado inicial
+  rooms: [], // Estado inicial para rooms
 };
 
 const reducer = (state = initialState, action) => {

@@ -1,61 +1,27 @@
-import React, { useState, useEffect } from "react";
+/*
+Path: src/components/SideBar.js
+Este es el componente SideBar que se muestra en la pantalla principal de la aplicación.
+*/
+
+import React, { useState} from "react";
 import { Avatar, IconButton } from "@material-ui/core";
 import DonutLargeIcon from "@material-ui/icons/DonutLarge";
 import ChatIcon from "@material-ui/icons/Chat";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import SearchIcon from "@material-ui/icons/Search";
-import Pusher from "pusher-js";
 import "./sidebar.css";
 import SideBarChat from "./SideBarChat";
-import { useSelector, useDispatch } from "react-redux";
-import { getRooms, updateRoomData } from "../redux/messages/messages-actions";
+import { useSelector } from "react-redux";
+
+const mockRoomsData = [
+  { _id: "1", name: "Room 1", roomMessages: [{ message: "Hello Room 1" }] },
+  { _id: "2", name: "Room 2", roomMessages: [{ message: "Hello Room 2" }] },
+];
 
 const SideBar = () => {
-  const [rooms, setRooms] = useState();
+  const [rooms] = useState(mockRoomsData);
 
   const user = useSelector((state) => state.rooms.user);
-  const roomsData = useSelector((state) => state.rooms.rooms);
-
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(getRooms());
-  }, [roomsData, rooms]);
-
-  useEffect(() => {
-    setRooms(roomsData);
-  }, [roomsData, rooms, setRooms]);
-
-  //pusher-js for realtime synch with mongo DB
-  useEffect(() => {
-    const pusher = new Pusher("945758d3b6566a1295a9", {
-      cluster: "ap2",
-    });
-    const channel = pusher.subscribe("messages");
-    channel.bind("inserted", (data) => {
-      dispatch(updateRoomData(data));
-    });
-
-    return () => {
-      channel.unsubscribe();
-      channel.unbind();
-    };
-  }, [roomsData]);
-
-  useEffect(() => {
-    const pusher = new Pusher("945758d3b6566a1295a9", {
-      cluster: "ap2",
-    });
-    const channel = pusher.subscribe("message");
-    channel.bind("updated", (data) => {
-      dispatch(getRooms());
-    });
-
-    return () => {
-      channel.unsubscribe();
-      channel.unbind();
-    };
-  }, [roomsData]);
 
   return (
     <div className="sideBar">
@@ -82,7 +48,7 @@ const SideBar = () => {
       <div className="sideBar_chat">
         <SideBarChat addNewChat={"hello"} />
         {rooms &&
-          rooms.map((room) => <SideBarChat key={room.id} room={room} />)}
+          rooms.map((room) => <SideBarChat key={room._id} room={room} />)}
       </div>
     </div>
   );

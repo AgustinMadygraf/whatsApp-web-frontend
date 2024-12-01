@@ -3,14 +3,14 @@ Path: src/components/Chat.js
 Este es el componente Chat que se muestra en la pantalla principal de la aplicación.
 */
 
+import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
 import { Avatar, IconButton } from "@material-ui/core";
 import { AttachFile, SearchOutlined, MoreVert } from "@material-ui/icons";
 import MoodIcon from "@material-ui/icons/Mood";
 import MicNoneIcon from "@material-ui/icons/MicNone";
-import React, { useState, useEffect } from "react";
 import "./chat.css";
-import { useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
 
 const mockRoomData = {
   name: "Mock Room",
@@ -77,7 +77,6 @@ function Chat() {
           </IconButton>
         </div>
       </div>
-      {/* chat body */}
       <div className="chat_body">
         {messages.map((message) => (
           <p
@@ -94,8 +93,6 @@ function Chat() {
           </p>
         ))}
       </div>
-
-      {/* chat footer */}
       <div className="chat_footer">
         <MoodIcon />
         <form>
