@@ -9,7 +9,7 @@ import "./App.css";
 import SideBar from "./components/SideBar";
 import Chat from "./components/Chat";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { useSelector} from "react-redux";
+import { useSelector } from "react-redux";
 import Login from "./components/login/login";
 
 function App() {
@@ -17,9 +17,7 @@ function App() {
   return (
     <div className="App">
       {!user ? (
-        <h1>
-          <Login />
-        </h1>
+        <Login />
       ) : (
         <div className="app_body">
           <Router>

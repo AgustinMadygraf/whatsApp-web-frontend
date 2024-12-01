@@ -4,22 +4,24 @@ Este es el componente Chat que se muestra en la pantalla principal de la aplicac
 */
 
 import { Avatar, IconButton } from "@material-ui/core";
-import {
-  AttachFile,
-  SearchOutlined,
-  MoreVert,
-} from "@material-ui/icons";
+import { AttachFile, SearchOutlined, MoreVert } from "@material-ui/icons";
 import MoodIcon from "@material-ui/icons/Mood";
 import MicNoneIcon from "@material-ui/icons/MicNone";
 import React, { useState, useEffect } from "react";
 import "./chat.css";
 import { useParams } from "react-router-dom";
-import { getSingleRoom, addMessage } from "../api/api";
 import { useSelector } from "react-redux";
+
+const mockRoomData = {
+  name: "Mock Room",
+  roomMessages: [
+    { id: 1, name: "User1", message: "Hello!", date: new Date() },
+    { id: 2, name: "User2", message: "Hi there!", date: new Date() },
+  ],
+};
 
 function Chat() {
   const user = useSelector((state) => state.rooms.user);
-  const roomsData = useSelector((state) => state.rooms.rooms);
   const [input, setInput] = useState("");
   const [seed, setSeed] = useState("123");
   const [roomName, setRoomName] = useState("");
@@ -28,20 +30,12 @@ function Chat() {
 
   const avatar = `https://avatars.dicebear.com/api/human/${seed}.svg`;
 
-  const room = async () => {
-    try {
-      const { data } = await getSingleRoom(roomId);
-      setRoomName(data.name);
-      setMessages(data.roomMessages);
-    } catch (error) {
-      console.log(error);
-    }
-  };
   useEffect(() => {
     if (roomId) {
-      room();
+      setRoomName(mockRoomData.name);
+      setMessages(mockRoomData.roomMessages);
     }
-  }, [roomsData]);
+  }, [roomId]);
 
   useEffect(() => {
     setSeed(Math.floor(Math.random() * 5000));
@@ -49,14 +43,14 @@ function Chat() {
 
   const btnHandler = (e) => {
     e.preventDefault();
-    const data = {
-      id: roomId,
+    const newMessage = {
+      id: messages.length + 1,
       name: user.displayName,
       message: input,
+      date: new Date(),
     };
 
-    addMessage(data);
-
+    setMessages([...messages, newMessage]);
     setInput("");
   };
 
