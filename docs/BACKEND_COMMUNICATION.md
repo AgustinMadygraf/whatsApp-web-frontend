@@ -5,6 +5,7 @@ Esta guía proporciona información sobre cómo el frontend se comunica con el b
 ## Tabla de Contenidos
 
 - [Descripción General](#descripción-general)
+- [Estructura de Carpetas](#estructura-carpetas)
 - [Endpoints del Backend](#endpoints-del-backend)
   - [Autenticación](#autenticación)
   - [Mensajería](#mensajería)
@@ -12,6 +13,7 @@ Esta guía proporciona información sobre cómo el frontend se comunica con el b
 - [Formato de Solicitudes y Respuestas](#formato-de-solicitudes-y-respuestas)
 - [Estructura del Adaptador](#estructura-del-adaptador)
 - [Ejemplos de Integración](#ejemplos-de-integración)
+- [Archivos a Revisar para Comunicación Backend](#archivos-a-revisar-para-comunicación-backend)
 
 ---
 
@@ -20,6 +22,65 @@ Esta guía proporciona información sobre cómo el frontend se comunica con el b
 El frontend de este proyecto se comunica con el backend mediante una serie de endpoints REST. El backend está diseñado para ser escalable y seguro, proporcionando funcionalidades como autenticación de usuarios, gestión de salas de chat y mensajería en tiempo real.
 
 La comunicación entre el frontend y el backend se maneja mediante HTTP, y los datos se envían en formato JSON. Además, se está desarrollando un adaptador que permitirá al frontend interactuar con un backend en Python que ya está en producción para un proyecto similar.
+
+## Estructura de Carpetas
+
+```
+whatsApp-web-frontend/
+|
+├── .vscode/                 # Archivos de configuración para VSCode
+├── docs/                    # Recursos relacionados con la documentación
+├── node_modules/            # Dependencias de Node.js
+├── public/                  # Activos públicos y archivo index.html
+│   ├── index.html           # Página principal del proyecto
+│   ├── logo.jpg             # Logo utilizado en la aplicación
+│   ├── manifest.json        # Archivo de manifiesto para PWA
+│   └── robots.txt           # Archivo para configurar el comportamiento de los motores de búsqueda
+├── screenshots/             # Capturas de pantalla para la vista previa
+│   ├── Capture1.JPG         # Captura de pantalla de la interfaz de usuario
+│   ├── Capture2.JPG         # Captura de pantalla mostrando la funcionalidad de chat
+│   └── Capture3.JPG         # Captura de pantalla de la vista previa de configuración
+├── src/                     # Directorio del código fuente
+│   ├── api/                 # Funciones relacionadas con la API
+│   │   └── api.js           # Archivo principal para llamadas al backend
+│   ├── components/          # Componentes de React
+│   │   ├── login/           # Componente de login
+│   │   │   ├── login.css    # Estilos específicos para el componente de login
+│   │   │   └── login.js     # Componente del formulario de inicio de sesión
+│   │   ├── chat.css         # Estilos específicos para el componente de chat
+│   │   ├── Chat.js          # Componente del chat principal
+│   │   ├── ChatBody.js      # Cuerpo del chat
+│   │   ├── ChatFooter.js    # Pie de chat con caja de entrada de mensajes
+│   │   ├── ChatHeader.js    # Encabezado del chat con información de la sala
+│   │   ├── LogoutButton.js  # Botón de cierre de sesión
+│   │   ├── sidebar.css      # Estilos específicos para el componente de barra lateral
+│   │   ├── SideBar.js       # Componente de barra lateral
+│   │   ├── sideBarChat.css  # Estilos para los chats de la barra lateral
+│   │   └── SideBarChat.js   # Componente para cada chat listado en la barra lateral
+│   ├── data/                # Archivos de datos estáticos o simulados
+│   │   └── mockRoomsData.js # Datos simulados para las salas de chat
+│   ├── globalContext/       # Archivos de Context API para la gestión global del estado
+│   │   ├── reducer.js       # Lógica para actualizar el estado global
+│   │   └── StateProvider.js # Proveedor de estado global para la aplicación
+│   ├── redux/               # Store y reducers de Redux
+│   │   ├── messages/        # Reducers específicos para la gestión de mensajes
+│   │   ├── rootReducer.js   # Combinación de todos los reducers
+│   │   └── store.js         # Configuración del store de Redux
+│   ├── utils/               # Funciones utilitarias
+│   │   └── auth.js          # Ayudantes de autenticación
+│   ├── App.css              # Estilos específicos para el componente principal de la aplicación
+│   ├── App.js               # Componente principal de la aplicación
+│   ├── firebase.js          # Configuración de Firebase
+│   ├── index.js             # Punto de entrada de la aplicación
+│   └── reportWebVitals.js   # Métricas de rendimiento de la aplicación
+├── .env                     # Variables de entorno (no compartidas)
+├── .env.example             # Variables de entorno de ejemplo
+├── .gitignore               # Archivos y directorios a ignorar en Git
+├── package.json             # Dependencias y scripts del proyecto
+├── package-lock.json        # Registro detallado de las dependencias para asegurar versiones consistentes
+└── README.md                # Archivo README del proyecto
+```
+
 
 ## Endpoints del Backend
 
@@ -98,6 +159,23 @@ Los mensajes entre los usuarios se manejan a través de los siguientes endpoints
 
 Los usuarios pueden crear y unirse a diferentes salas. Los endpoints para la gestión de salas incluyen:
 
+- **GET /api/rooms**: Obtiene una lista de todas las salas disponibles. Esta función se implementa en `src/api/api.js` ✔️ con la función `getRooms()`, la cual realiza una solicitud GET a `"http://localhost:3030/posts/room"`.
+  - **Respuesta**:
+    ```json
+    [
+      {
+        "roomId": "123456",
+        "nombre": "Sala de Amigos"
+      },
+      {
+        "roomId": "789012",
+        "nombre": "Sala de Trabajo"
+      }
+    ]
+    ```
+
+- **GET /api/rooms/{id}**: Obtiene la información de una sala específica. La función `getSingleRoom(id)` en `src/api/api.js` realiza esta solicitud con una llamada GET a la URL con el `id` de la sala.
+
 - **POST /api/rooms**: Crea una nueva sala de chat.
   - **Solicitud**:
     ```json
@@ -111,21 +189,6 @@ Los usuarios pueden crear y unirse a diferentes salas. Los endpoints para la ges
       "roomId": "123456",
       "mensaje": "Sala creada con éxito"
     }
-    ```
-
-- **GET /api/rooms**: Obtiene una lista de todas las salas disponibles.
-  - **Respuesta**:
-    ```json
-    [
-      {
-        "roomId": "123456",
-        "nombre": "Sala de Amigos"
-      },
-      {
-        "roomId": "789012",
-        "nombre": "Sala de Trabajo"
-      }
-    ]
     ```
 
 ## Formato de Solicitudes y Respuestas

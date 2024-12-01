@@ -1,3 +1,8 @@
+/*
+Path: src/globalContext/reducer.js
+Este archivo es el encargado de manejar el estado global de la aplicación.
+*/
+
 export const initialState = {
   user: null,
 };
