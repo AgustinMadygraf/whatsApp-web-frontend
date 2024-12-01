@@ -14,6 +14,7 @@ import SideBarChat from "./SideBarChat";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
+// Datos simulados de las salas
 const mockRoomsData = [
   { _id: "1", name: "Room 1", roomMessages: [{ message: "Hello Room 1" }] },
   { _id: "2", name: "Room 2", roomMessages: [{ message: "Hello Room 2" }] },
@@ -21,15 +22,13 @@ const mockRoomsData = [
 
 const SideBar = () => {
   const [rooms, setRooms] = useState(mockRoomsData);
-  const user = useSelector((state) => {
-    console.log("Estado global completo en SideBar:", state);
-    return state.rooms.user;
-  });
+  const user = useSelector((state) => state.rooms.user);
   const navigate = useNavigate();
 
-  // Depuración inicial del estado de las salas
+  // Mostrar el estado inicial de las salas para depuración
   console.log("Salas iniciales:", rooms);
 
+  // Función para añadir una nueva sala
   const addNewChat = () => {
     const roomName = prompt("Por favor, ingrese el nombre de la nueva sala de chat:");
 
@@ -39,17 +38,15 @@ const SideBar = () => {
         name: roomName.trim(),
         roomMessages: [],
       };
-      setRooms([...rooms, newRoom]);
+      setRooms((prevRooms) => [...prevRooms, newRoom]);
       console.log("Nueva sala añadida exitosamente:", newRoom);
     } else {
       console.warn("No se ingresó un nombre válido para la sala.");
     }
   };
 
+  // Manejar el clic en una sala
   const handleRoomClick = (roomId) => {
-    console.log("Room clickeado:", roomId);
-
-    // Verificar si la sala existe antes de navegar
     const roomExists = rooms.find((room) => room._id === roomId);
     if (roomExists) {
       console.log("Navegando a la sala:", `/rooms/${roomId}`);
@@ -62,8 +59,9 @@ const SideBar = () => {
 
   return (
     <div className="sideBar">
+      {/* Encabezado de la barra lateral */}
       <div className="sideBar_header">
-        <Avatar src={user?.photoURL} alt={user?.displayName || "User"} />
+        <Avatar src={user?.photoURL} alt={user?.displayName || "Usuario"} />
         <div className="sidebar_headerRight">
           <IconButton>
             <DonutLargeIcon />
@@ -77,6 +75,7 @@ const SideBar = () => {
         </div>
       </div>
 
+      {/* Búsqueda en la barra lateral */}
       <div className="sideBar_search">
         <div className="searchBar_container">
           <SearchIcon />
@@ -84,16 +83,15 @@ const SideBar = () => {
         </div>
       </div>
 
+      {/* Listado de salas */}
       <div className="sideBar_chat">
-        {/* Chat para crear una nueva sala */}
         <SideBarChat addNewChat={addNewChat} />
-        {/* Renderizar las salas existentes */}
-        {rooms && rooms.length > 0 ? (
+        {rooms.length > 0 ? (
           rooms.map((room) => (
             <SideBarChat
               key={room._id}
               room={room}
-              onClick={() => handleRoomClick(room._id)}
+              onClick={handleRoomClick}
             />
           ))
         ) : (
