@@ -3,7 +3,7 @@ Path: src/components/SideBar.js
 Este archivo contiene el componente de la barra lateral de chat.
 */
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Avatar, IconButton } from "@mui/material";
 import DonutLargeIcon from "@mui/icons-material/DonutLarge";
 import ChatIcon from "@mui/icons-material/Chat";
@@ -11,17 +11,29 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import SearchIcon from "@mui/icons-material/Search";
 import "./sidebar.css";
 import SideBarChat from "./SideBarChat";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import LogoutButton from "./LogoutButton";
-import { mockRoomsData } from "../data/mockRoomsData";
+import { getRooms } from "../redux/messages/messages-actions"; // Importa la acción para obtener las salas
 
 const SideBar = () => {
-  const [rooms] = useState(mockRoomsData);
+  const [rooms, setRooms] = useState([]);
   const user = useSelector((state) => state.rooms.user);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  console.log("Salas iniciales:", rooms);
+  useEffect(() => {
+    const fetchRooms = async () => {
+      try {
+        const roomsData = await dispatch(getRooms());
+        setRooms(roomsData.payload);
+      } catch (error) {
+        console.error("Error al obtener las salas:", error);
+      }
+    };
+
+    fetchRooms();
+  }, [dispatch]);
 
   const handleRoomClick = (roomId) => {
     console.log("ID de la sala clickeada:", roomId);
@@ -32,8 +44,8 @@ const SideBar = () => {
     } else {
       console.error("Error: Sala con ID no encontrada:", roomId);
     }
-  }; 
-  
+  };
+
   return (
     <div className="sideBar">
       <div className="sideBar_header">
@@ -48,7 +60,7 @@ const SideBar = () => {
           <IconButton>
             <MoreVertIcon />
           </IconButton>
-          <LogoutButton /> {/* Agregar LogoutButton aquí */}
+          <LogoutButton />
         </div>
       </div>
 
@@ -60,16 +72,14 @@ const SideBar = () => {
       </div>
 
       <div className="sideBar_chat">
-        {/* Componente para agregar una nueva sala */}
         <SideBarChat addNewChat={true} />
-        {/* Renderizar las salas existentes */}
         {rooms.length > 0 &&
           rooms.map((room) => (
             <SideBarChat
               key={room._id}
               room={room}
               onClick={handleRoomClick}
-              addNewChat={false} 
+              addNewChat={false}
             />
           ))}
       </div>

@@ -10,7 +10,7 @@ import "./chat.css";
 import ChatHeader from "./ChatHeader";
 import ChatBody from "./ChatBody";
 import ChatFooter from "./ChatFooter";
-import { mockRoomsData } from "../data/mockRoomsData";
+import { getSingleRoom } from "../api/api";
 
 function Chat() {
   const user = useSelector((state) => state.rooms.user);
@@ -19,19 +19,30 @@ function Chat() {
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {
-      console.log("Cargando datos para roomId:", roomId);
-    
-      const roomData = mockRoomsData[roomId];
-      if (roomData) {
-        console.log("Room encontrado:", roomData);
-        setRoomName(roomData.name);
-        setMessages(roomData.roomMessages);
-      } else {
-        console.error("Room no encontrado para roomId:", roomId);
-        setRoomName("Room no encontrado");
+    console.log("Cargando datos para roomId:", roomId);
+
+    // Obtén los datos de la sala desde el servidor
+    const fetchRoomData = async () => {
+      try {
+        const roomData = await getSingleRoom(roomId);
+        if (roomData) {
+          console.log("Room encontrado:", roomData.data);
+          setRoomName(roomData.data.name);
+          setMessages(roomData.data.roomMessages);
+        } else {
+          console.error("Room no encontrado para roomId:", roomId);
+          setRoomName("Room no encontrado");
+          setMessages([]);
+        }
+      } catch (error) {
+        console.error("Error al obtener los datos de la sala:", error);
+        setRoomName("Error al cargar la sala");
         setMessages([]);
       }
-    }, [roomId]);
+    };
+
+    fetchRoomData();
+  }, [roomId]);
 
   const handleSendMessage = (message) => {
     if (!message.trim()) {
