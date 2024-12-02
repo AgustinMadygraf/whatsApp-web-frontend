@@ -1,3 +1,8 @@
+/*
+Path: src/globalContext/reducer.js
+Este archivo es el encargado de manejar el estado global de la aplicación.
+*/
+
 export const initialState = {
   user: null,
 };
@@ -7,7 +12,7 @@ export const actionTypes = {
 };
 
 const reducer = (state, action) => {
-  Routes (action.type) {
+  switch (action.type) {
     case actionTypes.SET_USER:
       return {
         ...state,
