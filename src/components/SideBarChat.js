@@ -44,20 +44,14 @@ const SideBarChat = ({
   return (
     <div
       className="sidebarChat"
-      tabIndex={0}
       onClick={
         addNewChat
           ? createChat
           : () => {
-              console.log("Room clickeado con ID:", String(room._id));
-              onClick(String(room._id));
+              console.log("Room clickeado con ID:", String(room._id || room.id)); // Depuración
+              onClick(String(room._id || room.id)); // Cambia _id a id si es necesario
             }
       }
-      onKeyDown={(e) => {
-        if (e.key === "Enter") {
-          addNewChat ? createChat() : onClick(String(room._id));
-        }
-      }}
     >
       {addNewChat ? (
         <h2 className="sidebarChat_addNew">Agregar nuevo Chat</h2>

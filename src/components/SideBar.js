@@ -26,18 +26,20 @@ const SideBar = () => {
     const fetchRooms = async () => {
       try {
         const roomsData = await dispatch(getRooms());
+        console.log("Datos obtenidos del backend:", roomsData.payload); // Depuración
         setRooms(roomsData.payload);
       } catch (error) {
         console.error("Error al obtener las salas:", error);
       }
     };
-
+  
     fetchRooms();
   }, [dispatch]);
+  
 
   const handleRoomClick = (roomId) => {
     console.log("ID de la sala clickeada:", roomId);
-    const roomExists = rooms.find((room) => String(room._id) === String(roomId));
+    const roomExists = rooms.find((room) => String(room.id) === String(roomId));
     if (roomExists) {
       console.log("Navegando a la sala:", `/rooms/${roomId}`);
       navigate(`/rooms/${roomId}`);
@@ -45,6 +47,7 @@ const SideBar = () => {
       console.error("Error: Sala con ID no encontrada:", roomId);
     }
   };
+  
 
   return (
     <div className="sideBar">
@@ -76,7 +79,7 @@ const SideBar = () => {
         {rooms.length > 0 &&
           rooms.map((room, index) => (
             <SideBarChat
-              key={room._id || index}
+              key={room.id || index}
               room={room}
               onClick={handleRoomClick}
               addNewChat={false}

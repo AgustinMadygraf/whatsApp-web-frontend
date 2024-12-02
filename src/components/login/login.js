@@ -37,11 +37,11 @@ const Login = () => {
     <div className="login">
       <div className="login_container">
         <img
-          src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/WhatsApp.svg/1200px-WhatsApp.svg.png"
-          alt="whatsAPP"
+          src="/img01.jpg"
+          alt="MadyBot"
         />
         <div className="login_text">
-          <h6>Sign in to WhatsApp</h6>
+          <h6>Sign in to MadyBot</h6>
         </div>
         <Button variant="contained" color="primary" onClick={signIn}>
           Sign with Google

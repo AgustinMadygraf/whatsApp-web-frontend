@@ -24,7 +24,7 @@ const router = createBrowserRouter([
       },
       {
         path: "*",
-        element: <div>404 Not Found</div>,
+        element: <div className="not-found">404 - Página no encontrada</div>,
       },
     ],
   },
@@ -34,11 +34,15 @@ function App() {
   const user = useSelector((state) => state.rooms.user);
   const dispatch = useDispatch();
 
+  // Restaurar usuario desde localStorage
   useEffect(() => {
-    // Restaurar usuario desde localStorage
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      dispatch(setUser(JSON.parse(storedUser)));
+    try {
+      const storedUser = localStorage.getItem("user");
+      if (storedUser) {
+        dispatch(setUser(JSON.parse(storedUser)));
+      }
+    } catch (error) {
+      console.error("Error al restaurar usuario desde localStorage:", error);
     }
   }, [dispatch]);
 

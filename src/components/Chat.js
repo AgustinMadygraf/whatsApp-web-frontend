@@ -14,37 +14,68 @@ import { getSingleRoom } from "../api/api";
 
 function Chat() {
   const user = useSelector((state) => state.rooms.user);
-  const { roomId } = useParams(); // roomId siempre será una cadena
+  const { roomId } = useParams();
   const [roomName, setRoomName] = useState("");
   const [messages, setMessages] = useState([]);
 
-  useEffect(() => {
-    console.log("Cargando datos para roomId:", roomId);
+  // Función para sanitizar mensajes
+  const sanitizeMessages = (msgs) => 
+    msgs.map((msg) => ({
+      id: msg.id || "sin-id",
+      name: msg.name || "Desconocido",
+      message: msg.message || "",
+      date: msg.date || new Date(),
+    }));
 
-    // Obtén los datos de la sala desde el servidor
-    const fetchRoomData = async () => {
-      try {
-        const roomData = await getSingleRoom(roomId);
-        if (roomData) {
-          console.log("Room encontrado:", roomData.data);
-          setRoomName(roomData.data.name);
-          setMessages(roomData.data.roomMessages);
-        } else {
-          console.error("Room no encontrado para roomId:", roomId);
-          setRoomName("Room no encontrado");
-          setMessages([]);
-        }
-      } catch (error) {
-        console.error("Error al obtener los datos de la sala:", error);
-        setRoomName("Error al cargar la sala");
+  // Función para cargar datos de la sala
+  const fetchRoomData = async () => {
+    console.log("Cargando datos para roomId:", roomId);
+    try {
+      const roomData = await getSingleRoom(roomId);
+      if (roomData?.data) {
+        console.log("Room encontrado:", roomData.data);
+        setRoomName(roomData.data.name);
+        setMessages(sanitizeMessages(roomData.data.roomMessages || []));
+      } else {
+        console.error("Room no encontrado para roomId:", roomId);
+        setRoomName("Room no encontrado");
         setMessages([]);
       }
-    };
+    } catch (error) {
+      console.error("Error al obtener los datos de la sala:", error.message);
+      setRoomName("Error al cargar la sala");
+      setMessages([]);
+    }
+  };
 
-    fetchRoomData();
+  // Reintento automático para cargar la sala
+  const fetchRoomDataWithRetry = async (retries = 3) => {
+    for (let attempt = 1; attempt <= retries; attempt++) {
+      try {
+        await fetchRoomData();
+        return;
+      } catch (error) {
+        console.error(`Intento ${attempt} fallido:`, error.message);
+        if (attempt === retries) {
+          setRoomName("Error al cargar la sala. Intente nuevamente.");
+        }
+      }
+    }
+  };
+
+  // Llama a la función para cargar la sala al montar el componente
+  useEffect(() => {
+    if (roomId) {
+      fetchRoomDataWithRetry();
+    } else {
+      console.error("roomId no válido:", roomId);
+      setRoomName("ID de sala no válido");
+      setMessages([]);
+    }
   }, [roomId]);
 
-  const handleSendMessage = (message) => {
+  // Manejo del envío de mensajes
+  const handleSendMessage = async (message) => {
     if (!message.trim()) {
       console.warn("El mensaje está vacío. No se enviará.");
       return;
@@ -57,8 +88,25 @@ function Chat() {
       date: new Date(),
     };
 
+    // Actualiza el estado local de los mensajes
     setMessages((prevMessages) => [...prevMessages, newMessage]);
-    console.log("Mensaje enviado:", newMessage);
+    console.log("Mensaje enviado localmente:", newMessage);
+
+    // Envía el mensaje al backend
+    try {
+      const response = await fetch(`/rooms/${roomId}/messages`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newMessage),
+      });
+
+      if (!response.ok) {
+        throw new Error("Error al guardar el mensaje en el backend");
+      }
+      console.log("Mensaje guardado en el backend:", newMessage);
+    } catch (error) {
+      console.error("Error al enviar el mensaje al backend:", error.message);
+    }
   };
 
   return (
