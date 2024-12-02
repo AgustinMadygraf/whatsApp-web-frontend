@@ -1,10 +1,10 @@
 /*
-Path: src/components/login/login.js
-Este archivo es donde se configura el componente Login.
+Path: src/components/login/login.jsPath: src/components/login/login.js
+Este archivo es donde se configura el componente Login.Este archivo es donde se configura el componente Login.
 */
 
 import React from "react";
-import { Button } from "@material-ui/core";
+import { Button } from "@mui/material";
 import "./login.css";
 import { useDispatch } from "react-redux";
 import { setUser } from "../../redux/messages/messages-actions";
@@ -18,26 +18,34 @@ const Login = () => {
     console.log("Intentando iniciar sesión con Google...");
     signInWithPopup(auth, provider)
       .then((result) => {
-        console.log("Inicio de sesión exitoso:", result.user);
-        dispatch(setUser(result.user));
+        const user = result.user;
+        console.log("Inicio de sesión exitoso:", user);
+
+        // Guardar en localStorage
+        localStorage.setItem("user", JSON.stringify(user));
+
+        // Actualizar Redux
+        dispatch(setUser(user));
       })
       .catch((err) => {
         console.error("Error en el inicio de sesión:", err.message);
         alert(err.message);
       });
   };
- 
+
   return (
     <div className="login">
       <div className="login_container">
         <img
-          src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/WhatsApp.svg/1200px-WhatsApp.svg.png"
-          alt="whatsAPP"
+          src="/img01.jpg"
+          alt="MadyBot"
         />
         <div className="login_text">
-          <h6>Sign in to WhatsApp</h6>
+          <h6>Sign in to MadyBot</h6>
         </div>
-        <Button onClick={signIn}>Sign with Google</Button>
+        <Button variant="contained" color="primary" onClick={signIn}>
+          Sign with Google
+        </Button>
       </div>
     </div>
   );
