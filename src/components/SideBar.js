@@ -14,7 +14,7 @@ import SideBarChat from "./SideBarChat";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import LogoutButton from "./LogoutButton";
-import { getRooms } from "../redux/messages/messages-actions"; // Importa la acción para obtener las salas
+import { getRooms } from "../redux/messages/messages-actions";
 
 const SideBar = () => {
   const [rooms, setRooms] = useState([]);
@@ -37,7 +37,7 @@ const SideBar = () => {
 
   const handleRoomClick = (roomId) => {
     console.log("ID de la sala clickeada:", roomId);
-    const roomExists = rooms.find((room) => String(room._id) === roomId);
+    const roomExists = rooms.find((room) => String(room._id) === String(roomId));
     if (roomExists) {
       console.log("Navegando a la sala:", `/rooms/${roomId}`);
       navigate(`/rooms/${roomId}`);
@@ -74,9 +74,9 @@ const SideBar = () => {
       <div className="sideBar_chat">
         <SideBarChat addNewChat={true} />
         {rooms.length > 0 &&
-          rooms.map((room) => (
+          rooms.map((room, index) => (
             <SideBarChat
-              key={room._id}
+              key={room._id || index}
               room={room}
               onClick={handleRoomClick}
               addNewChat={false}

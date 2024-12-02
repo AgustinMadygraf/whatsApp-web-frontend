@@ -4,14 +4,14 @@ Este archivo contiene el componente de la barra lateral de chat.
 */
 
 import React, { useState, useEffect } from "react";
-import { Avatar } from "@mui/material"; // Cambiado a MUI moderno
-import PropTypes from "prop-types"; // Agregar validaciones de tipo
+import { Avatar } from "@mui/material";
+import PropTypes from "prop-types";
 import "./sideBarChat.css";
 
 const SideBarChat = ({
-  addNewChat = false, // Valor predeterminado
-  room = { _id: "", name: "Sin nombre", roomMessages: [] }, // Valor predeterminado
-  onClick = () => {}, // Valor predeterminado
+  addNewChat = false,
+  room = { _id: "default", name: "Sin nombre", roomMessages: [] },
+  onClick = () => {},
 }) => {
   const [seed, setSeed] = useState("123");
   const avatar = `https://avatars.dicebear.com/api/human/${seed}.svg`;
@@ -44,14 +44,20 @@ const SideBarChat = ({
   return (
     <div
       className="sidebarChat"
+      tabIndex={0}
       onClick={
         addNewChat
           ? createChat
           : () => {
-              console.log("Room clickeado con ID:", String(room._id)); // Depuración
-              onClick(String(room._id)); // Convertir room._id a cadena
+              console.log("Room clickeado con ID:", String(room._id));
+              onClick(String(room._id));
             }
       }
+      onKeyDown={(e) => {
+        if (e.key === "Enter") {
+          addNewChat ? createChat() : onClick(String(room._id));
+        }
+      }}
     >
       {addNewChat ? (
         <h2 className="sidebarChat_addNew">Agregar nuevo Chat</h2>
@@ -62,11 +68,10 @@ const SideBarChat = ({
   );
 };
 
-// Validación de las props
 SideBarChat.propTypes = {
   addNewChat: PropTypes.bool,
   room: PropTypes.shape({
-    _id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    _id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     name: PropTypes.string,
     roomMessages: PropTypes.arrayOf(
       PropTypes.shape({
