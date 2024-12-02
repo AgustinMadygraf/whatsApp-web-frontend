@@ -25,7 +25,8 @@ export const getSingleRoom = async (id) => {
 
 export const addMessage = async (data) => {
   try {
-    console.log("running");
+    const response = await axios.post("http://localhost:3030/posts/message", data);
+    return response;
   } catch (error) {
     console.log(error);
   }
