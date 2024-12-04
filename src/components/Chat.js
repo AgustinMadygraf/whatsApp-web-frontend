@@ -1,13 +1,13 @@
+/*
+Path: src/components/Chat.js
+Este archivo mostrará la interfaz de chat de la aplicación.
+*/
+
 import { Avatar, IconButton } from "@material-ui/core";
-import {
-  AttachFile,
-  SearchOutlined,
-  MoreVert,
-  InsertEmoticonIcon,
-} from "@material-ui/icons";
+import { AttachFile, SearchOutlined, MoreVert } from "@material-ui/icons";
 import MoodIcon from "@material-ui/icons/Mood";
 import MicNoneIcon from "@material-ui/icons/MicNone";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import "./chat.css";
 import { useParams } from "react-router-dom";
 import { getSingleRoom, addMessage } from "../api/api";
@@ -16,57 +16,69 @@ import { useSelector } from "react-redux";
 function Chat() {
   const user = useSelector((state) => state.rooms.user);
   const roomsData = useSelector((state) => state.rooms.rooms);
+  
+  const { roomId } = useParams();
+  
   const [input, setInput] = useState("");
   const [seed, setSeed] = useState("123");
   const [roomName, setRoomName] = useState("");
-  const { roomId } = useParams();
   const [messages, setMessages] = useState([]);
 
   const avatar = `https://avatars.dicebear.com/api/human/${seed}.svg`;
 
-  const room = async () => {
+  const fetchRoomData = useCallback(async () => {
+    console.log("Obteniendo datos de la sala con ID:", roomId);
     try {
       const { data } = await getSingleRoom(roomId);
+      console.log("Datos de la sala obtenidos:", data);
       setRoomName(data.name);
       setMessages(data.roomMessages);
     } catch (error) {
-      console.log(error);
+      console.error("Error al obtener datos de la sala:", error);
     }
-  };
+  }, [roomId]);
+
   useEffect(() => {
     if (roomId) {
-      room();
+      console.log("roomId ha cambiado, reobteniendo datos de la sala");
+      fetchRoomData();
     }
-  }, [roomsData]);
+  }, [roomsData, roomId, fetchRoomData]);
 
   useEffect(() => {
-    setSeed(Math.floor(Math.random() * 5000));
+    const newSeed = Math.floor(Math.random() * 5000);
+    console.log("Generando nuevo seed para avatar:", newSeed);
+    setSeed(newSeed);
   }, []);
 
-  const btnHandler = (e) => {
+  const btnHandler = async (e) => {
     e.preventDefault();
+    console.log("Enviando mensaje:", input);
+
     const data = {
       id: roomId,
       name: user.displayName,
       message: input,
     };
 
-    addMessage(data);
-
-    setInput("");
+    try {
+      await addMessage(data);
+      console.log("Mensaje enviado con éxito");
+      setInput("");
+      fetchRoomData();
+    } catch (error) {
+      console.error("Error al enviar el mensaje:", error);
+    }
   };
 
   return (
     <div className="chat">
       <div className="chat_header">
         <Avatar src={avatar} />
-
         <div className="chat_headerInfo">
           <h3>{roomName}</h3>
-
-          <p>last seen at {new Date().toLocaleTimeString()}</p>
+          <p>Última vez visto a las {new Date().toLocaleTimeString()}</p>
         </div>
-
         <div className="chat_headerRight">
           <IconButton>
             <SearchOutlined />
@@ -79,14 +91,12 @@ function Chat() {
           </IconButton>
         </div>
       </div>
-      {/* chat body */}
+
       <div className="chat_body">
         {messages.map((message) => (
           <p
             key={message.id}
-            className={`chat_message ${
-              message.name === user.displayName && "chat_reciever"
-            }`}
+            className={`chat_message ${message.name === user.displayName && "chat_reciever"}`}
           >
             <span className="chat_name">{message.name} </span>
             {message.message}
@@ -97,19 +107,19 @@ function Chat() {
         ))}
       </div>
 
-      {/* chat footer */}
       <div className="chat_footer">
         <MoodIcon />
-        <form>
+        <form onSubmit={btnHandler}>
           <input
             type="text"
-            placeholder="Type a message"
+            placeholder="Escribe un mensaje"
             value={input}
-            onChange={(e) => setInput(e.target.value)}
+            onChange={(e) => {
+              console.log("Cambiando valor del input:", e.target.value);
+              setInput(e.target.value);
+            }}
           />
-          <button type="submit" onClick={btnHandler}>
-            Send
-          </button>
+          <button type="submit">Enviar</button>
         </form>
         <MicNoneIcon />
       </div>

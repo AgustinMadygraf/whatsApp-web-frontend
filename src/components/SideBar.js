@@ -1,3 +1,8 @@
+/*
+Path: src/components/SideBar.js
+Este archivo mostrará la barra lateral de la aplicación.
+*/
+
 import React, { useState, useEffect } from "react";
 import { Avatar, IconButton } from "@material-ui/core";
 import DonutLargeIcon from "@material-ui/icons/DonutLarge";
@@ -18,44 +23,53 @@ const SideBar = () => {
 
   const dispatch = useDispatch();
 
+  // Efecto para obtener las salas iniciales
   useEffect(() => {
+    console.log("Ejecutando useEffect para obtener salas");
     dispatch(getRooms());
+  }, [roomsData, rooms, dispatch]);
+
+  // Efecto para actualizar el estado interno de rooms con roomsData
+  useEffect(() => {
+    console.log("Actualizando el estado interno de rooms con roomsData:", roomsData);
+    setRooms(roomsData);
   }, [roomsData, rooms]);
 
+  // Efecto para configurar Pusher - canal "messages"
   useEffect(() => {
-    setRooms(roomsData);
-  }, [roomsData, rooms, setRooms]);
-
-  //pusher-js for realtime synch with mongo DB
-  useEffect(() => {
-    const pusher = new Pusher("945758d3b6566a1295a9", {
-      cluster: "ap2",
-    });
+    console.log("Configurando Pusher para el canal 'messages'");
+    const pusher = new Pusher("945758d3b6566a1295a9", { cluster: "ap2" });
     const channel = pusher.subscribe("messages");
+
     channel.bind("inserted", (data) => {
+      console.log("Evento 'inserted' recibido con data:", data);
       dispatch(updateRoomData(data));
     });
 
     return () => {
+      console.log("Limpiando suscripción a Pusher del canal 'messages'");
       channel.unsubscribe();
       channel.unbind();
     };
-  }, [roomsData]);
+  }, [dispatch]);
 
+  // Efecto para configurar Pusher - canal "message" (actualización de mensajes)
   useEffect(() => {
-    const pusher = new Pusher("945758d3b6566a1295a9", {
-      cluster: "ap2",
-    });
+    console.log("Configurando Pusher para el canal 'message'");
+    const pusher = new Pusher("945758d3b6566a1295a9", { cluster: "ap2" });
     const channel = pusher.subscribe("message");
+
     channel.bind("updated", (data) => {
+      console.log("Evento 'updated' recibido con data:", data);
       dispatch(getRooms());
     });
 
     return () => {
+      console.log("Limpiando suscripción a Pusher del canal 'message'");
       channel.unsubscribe();
       channel.unbind();
     };
-  }, [roomsData]);
+  }, [dispatch]);
 
   return (
     <div className="sideBar">
@@ -80,9 +94,10 @@ const SideBar = () => {
         </div>
       </div>
       <div className="sideBar_chat">
-        <SideBarChat addNewChat={"hello"} />
-        {rooms &&
-          rooms.map((room) => <SideBarChat key={room.id} room={room} />)}
+        <SideBarChat addNewChat="hello" />
+        {rooms && rooms.map((room) => (
+          <SideBarChat key={room.id} room={room} />
+        ))}
       </div>
     </div>
   );
