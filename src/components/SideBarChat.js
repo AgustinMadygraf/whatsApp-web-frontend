@@ -51,8 +51,8 @@ const SideBarChat = ({ addNewChat, room }) => {
               color: "#3a3838",
             }}
           >
-            {room.roomMessages[0].message != undefined
-              ? room.roomMessages[0]?.message +   ".."
+            {room.roomMessages && room.roomMessages[0] && room.roomMessages[0].message !== undefined
+              ? room.roomMessages[0].message + ".."
               : "..."}
           </p>
         </div>

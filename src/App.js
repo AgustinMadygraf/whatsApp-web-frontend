@@ -4,7 +4,7 @@ import SideBar from "./components/SideBar";
 import Chat from "./components/Chat";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { useSelector} from "react-redux";
-import Login from "./components/login/Login";
+import Login from "./components/login/login";
 
 function App() {
   const user = useSelector((state) => state.rooms.user);

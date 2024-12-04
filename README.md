@@ -47,6 +47,9 @@ $ git clone https://github.com/manoharys/whatsApp-web-frontend.git
 $ npm install 
 ```
 
+$env:NODE_OPTIONS="--openssl-legacy-provider"
+npm start
+
 - Start a server.
 ```bash
 $ npm start
